@@ -20,7 +20,7 @@ exports.getPlayerData = function (q) {
 // 選手名から選手データのページURLを得てgetPlayerDataByUrlを実行する関数
 function getPlayerDataByName(q) {
     return new Promise((resolve, reject) => {
-        request(url_base+url_srch+q, (e, response, body) => {
+        request(encodeURI(url_base+url_srch+q), (e, response, body) => {
             if (e) {
                 console.error(e);
             }
