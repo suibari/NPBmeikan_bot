@@ -8,13 +8,13 @@ const url_base = 'https://npb.jp/';
 const url_srch = 'bis/players/search/result?active_flg=Y&search_keyword='; // npb公式選手検索
 
 // index.jsから関数読み出し可能にする. NPB選手検索システムから検索結果を得る
-//exports.getPlayerData = function (q) {
-//    return new Promise(function (resolve, reject) {
-//        var res = getPlayerDataByName(q);
-//        resolve(res);
-//    })
-//} 
-getPlayerDataByName(process.argv[2]);
+exports.getPlayerData = function (q) {
+    return new Promise(function (resolve, reject) {
+        var res = getPlayerDataByName(q);
+        resolve(res);
+    })
+} 
+//getPlayerDataByName(process.argv[2]);
 
 // 選手名から選手データのページURLを得てgetPlayerDataByUrlを実行する関数
 function getPlayerDataByName(q) {
