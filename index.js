@@ -36,10 +36,13 @@ function handleEvent(event) {
   }
 
   // create a echoing text message
-  const echo = { type: 'text', text: event.message.text };
+  //const echo = { type: 'text', text: event.message.text };
+  var reply_text = require('./scraping.js').getPlayerData(event.message.text);
+  const reply    = {type: 'text', 
+                    text: reply_text};
 
   // use reply API
-  return client.replyMessage(event.replyToken, echo);
+  return client.replyMessage(event.replyToken, reply);
 }
 
 // listen on port
