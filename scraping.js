@@ -87,7 +87,7 @@ function getPlayerDataByUrl(url_p) {
                         result.stats.win  = stats.find('td').eq(3).text();
                         result.stats.lose = stats.find('td').eq(4).text();
                         result.stats.save = stats.find('td').eq(5).text();
-                        result.stats.era  = stats.find('td').eq(23).text();
+                        result.stats.era  = stats.find('td').eq(24).text();
                     } else {
                         //console.log(stats.find('td').eq(2));
                         result.stats.game = stats.find('td').eq(2).text();
