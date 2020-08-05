@@ -8,14 +8,14 @@ const url_base = 'https://npb.jp/';
 const url_srch = 'bis/players/search/result?active_flg=Y&search_keyword='; // npb公式選手検索
 
 // index.jsから関数読み出し可能にする. NPB選手検索システムから検索結果を得る
-exports.getPlayerData = function (q) {
-    return new Promise(function (resolve, reject) {
-        getPlayerDataByName(q).then( res => {
-            resolve(res);
-        })
-    })
-} 
-//getPlayerDataByName(process.argv[2]);
+//exports.getPlayerData = function (q) {
+//    return new Promise(function (resolve, reject) {
+//        getPlayerDataByName(q).then( res => {
+//            resolve(res);
+//        })
+//    })
+//} 
+getPlayerDataByName(process.argv[2]);
 
 // 選手名から選手データのページURLを得てgetPlayerDataByUrlを実行する関数
 function getPlayerDataByName(q) {
@@ -30,14 +30,19 @@ function getPlayerDataByName(q) {
                 const $ = cheerio.load(response.body);
                 url_player = $('a.player_unit_1', '#pl_result_list' ).attr('href');
                 //console.log(url_player);
-                getPlayerDataByUrl(url_player).then(player_info => {
-                    //getPlayerDataByUrl関数実行完了時の処理
-                    resolve(player_info);
-                    //console.log(player_info);
-                    
-                    //console.log(arrangeText(player_info));
-                    //resolve(arrangeText(player_info));
-                });
+                if (url_player) {
+                    getPlayerDataByUrl(url_player).then(player_info => {
+                        //getPlayerDataByUrl関数実行完了時の処理
+                        resolve(player_info);
+                        //console.log(player_info);
+
+                        //console.log(arrangeText(player_info));
+                        //resolve(arrangeText(player_info));
+                    });
+                } else {
+                    // 検索で引っかからない場合、nullを返す
+                    resolve(null);
+                }
     
             } catch (e) {
                 console.error(e);
@@ -71,7 +76,31 @@ function getPlayerDataByUrl(url_p) {
                 result.birthday  = bio.find('tr').eq(3).find('td').text();
                 result.career    = bio.find('tr').eq(4).find('td').text();
                 result.draft_y   = bio.find('tr').eq(5).find('td').text();
+
+                var stats = $('div#pc_stats_wrapper td.year:contains("2020")').parent();
+                //console.log($("div#pc_stats_wrapper td.year:contains('2020')").text());
+                //console.log(stats);
+                if (stats) {
+                    result.stats = {};
+                    if (result.position == "投手") {
+                        result.stats.game = stats.find('td').eq(2).text();
+                        result.stats.win  = stats.find('td').eq(3).text();
+                        result.stats.lose = stats.find('td').eq(4).text();
+                        result.stats.save = stats.find('td').eq(5).text();
+                        result.stats.era  = stats.find('td').eq(23).text();
+                    } else {
+                        //console.log(stats.find('td').eq(2));
+                        result.stats.game = stats.find('td').eq(2).text();
+                        result.stats.ab   = stats.find('td').eq(4).text();
+                        result.stats.avg  = stats.find('td').eq(20).text();
+                        result.stats.slg  = stats.find('td').eq(21).text();
+                        result.stats.obp  = stats.find('td').eq(22).text();
+                    }
+                } else {
+                    // 今シーズンの出場がない場合、stats propertyはnull
+                }
                 
+                console.log(result);
                 resolve(result); //処理完了時にresultを返す
 
             } catch (e) {

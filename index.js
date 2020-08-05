@@ -39,14 +39,20 @@ function handleEvent(event) {
   // create a echoing text message
   //const echo = { type: 'text', text: event.message.text };
   require('./scraping.js').getPlayerData(event.message.text).then( obj => {
-    const message  = arrangeText(obj);
-    const messages = [
-                      {type: 'image', 
-                       originalContentUrl: obj.photo_url,
-                       previewImageUrl: obj.photo_url},
-                      {type: 'text',
-                       text: message}
-                     ];
+    var messages;
+    if (obj) {
+      const message = arrangeText(obj);
+      messages = [
+                  {type: 'image', 
+                   originalContentUrl: obj.photo_url,
+                   previewImageUrl: obj.photo_url},
+                  {type: 'text',
+                   text: message}
+                 ];
+    } else {
+      messages = {type: 'text',
+                  text: "選手が見つかりませんでした。"};
+    }
     // use reply API
     return client.replyMessage(event.replyToken, messages);
   });
@@ -61,9 +67,27 @@ app.listen(port, () => {
 
 // LINE表示用にテキスト整形
 function arrangeText(obj) {
+  var res;
+
   var dst = moment(obj.birthday, "YYYY年MM月DD日").format();
-  return obj.name + "\n" +
-         obj.team + " #" + obj.no + "\n" + 
-         obj.position + "/" + obj.bt + "\n" +
-         obj.birthday + "生まれ(" + moment().diff(dst, 'years') + "歳)";
+  res = obj.name + "\n" +
+        obj.team + " #" + obj.no + "\n" + 
+        obj.position + "/" + obj.bt + "\n" +
+        obj.birthday + "生まれ(" + moment().diff(dst, 'years') + "歳)\n" +
+        "\n";
+  if (obj.stats) {
+    res = res + "<今シーズンの成績>\n"
+    if (obj.position == "投手") {
+      obj.stats.game + "試合" + obj.stats.win + "勝" + obj.stats.lose + "敗" + obj.stats.save + "S\n" +
+      "防御率" + obj.stats.era;
+    } else {
+      obj.stats.game + "試合" + obj.stats.ab + "打数\n" + 
+      "打率: " + obj.stats.avg + "\n" +
+      "長打率: " + obj.stats.slg + "\n" +
+      "出塁率: " + obj.stats.obp;
+    }
+  } else {
+    res = res + "<今シーズン未出場>"
+  }
+  return res;
 }
