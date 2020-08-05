@@ -10,36 +10,39 @@ const url_srch = 'bis/players/search/result?active_flg=Y&search_keyword='; // np
 // index.jsから関数読み出し可能にする. NPB選手検索システムから検索結果を得る
 exports.getPlayerData = function (q) {
     return new Promise(function (resolve, reject) {
-        var res = getPlayerDataByName(q);
-        resolve(res);
+        getPlayerDataByName(q).then( res => {
+            resolve(res);
+        })
     })
 } 
 //getPlayerDataByName(process.argv[2]);
 
 // 選手名から選手データのページURLを得てgetPlayerDataByUrlを実行する関数
 function getPlayerDataByName(q) {
-    request(url_base+url_srch+q, (e, response, body) => {
-        if (e) {
-            console.error(e);
-        }
-        try {
-            var url_player;
+    return new Promise((resolve, reject) => {
+        request(url_base+url_srch+q, (e, response, body) => {
+            if (e) {
+                console.error(e);
+            }
+            try {
+                var url_player;
     
-            const $ = cheerio.load(response.body);
-            url_player = $('a.player_unit_1', '#pl_result_list' ).attr('href');
-            //console.log(url_player);
-            getPlayerDataByUrl(url_player).then(player_info => {
-                //getPlayerDataByUrl関数実行完了時の処理
-                //console.log(player_info);
-                console.log(arrangeText(player_info));
-                return arrangeText(player_info);
-            });
+                const $ = cheerio.load(response.body);
+                url_player = $('a.player_unit_1', '#pl_result_list' ).attr('href');
+                //console.log(url_player);
+                getPlayerDataByUrl(url_player).then(player_info => {
+                    //getPlayerDataByUrl関数実行完了時の処理
+                    //console.log(player_info);
+                    console.log(arrangeText(player_info));
+                    resolve(arrangeText(player_info));
+                });
     
-        } catch (e) {
-            console.error(e);
-        }
-    }
-)};
+            } catch (e) {
+                console.error(e);
+            }
+        })
+    });
+};
 
 // 選手データページURLからデータ取得する関数
 function getPlayerDataByUrl(url_p) {
