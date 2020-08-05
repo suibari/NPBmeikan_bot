@@ -3,7 +3,7 @@
 const request  = require('request');
 const cheerio  = require('cheerio');
 //const { response } = require('express');
-const moment   = require('moment');
+//const moment   = require('moment');
 const url_base = 'https://npb.jp/';
 const url_srch = 'bis/players/search/result?active_flg=Y&search_keyword='; // npb公式選手検索
 
@@ -32,9 +32,11 @@ function getPlayerDataByName(q) {
                 //console.log(url_player);
                 getPlayerDataByUrl(url_player).then(player_info => {
                     //getPlayerDataByUrl関数実行完了時の処理
+                    resolve(player_info);
                     //console.log(player_info);
-                    console.log(arrangeText(player_info));
-                    resolve(arrangeText(player_info));
+                    
+                    //console.log(arrangeText(player_info));
+                    //resolve(arrangeText(player_info));
                 });
     
             } catch (e) {
@@ -79,10 +81,3 @@ function getPlayerDataByUrl(url_p) {
     });
 };
 
-function arrangeText(obj) {
-    var dst = moment(obj.birthday, "YYYY年MM月DD日").format();
-    return obj.name + "\n" +
-           obj.team + " #" + obj.no + "\n" + 
-           obj.position + "/" + obj.bt + "\n" +
-           obj.birthday + "生まれ(" + moment().diff(dst, 'years') + "歳)\n";
-}
