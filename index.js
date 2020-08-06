@@ -41,6 +41,7 @@ function handleEvent(event) {
   require('./scraping.js').getPlayerData(event.message.text).then( obj => {
     var messages;
     if (obj) {
+      // 選手情報が返ってきた場合
       const message = arrangeText(obj);
       messages = [
                   {type: 'image', 
@@ -50,6 +51,7 @@ function handleEvent(event) {
                    text: message}
                  ];
     } else {
+      // 何も返ってこなかった場合
       messages = {type: 'text',
                   text: "選手が見つかりませんでした。"};
     }
