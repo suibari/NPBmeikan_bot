@@ -76,17 +76,17 @@ function arrangeText(obj) {
         obj.team + " #" + obj.no + "\n" + 
         obj.position + "/" + obj.bt + "\n" +
         obj.birthday + "生まれ(" + moment().diff(dst, 'years') + "歳)\n" +
+        obj.career   + " (" + obj.draft_y + ")\n" + 
         "\n";
   if (obj.stats) {
     res = res + "<今シーズンの成績>\n"
     if (obj.position == "投手") {
-      res = res + obj.stats.game + "試合" + obj.stats.win + "勝" + obj.stats.lose + "敗" + obj.stats.save + "S\n" +
-                  "防御率" + obj.stats.era;
+      res = res + "試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
+                  "/回" + obj.stats.inning + "/防" + obj.stats.era;
     } else {
-      res = res + obj.stats.game + "試合" + obj.stats.ab + "打数\n" + 
-                  "打率: "   + obj.stats.avg + "\n" +
-                  "長打率: " + obj.stats.slg + "\n" +
-                  "出塁率: " + obj.stats.obp;
+      res = res + "試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
+                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "\n"
+                  "OPS:" + obj.stats.ops;
     }
   } else {
     res = res + "<今シーズン未出場>"

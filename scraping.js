@@ -13,7 +13,7 @@ exports.getPlayerData = function (q) {
     })
   })
 }
-// ローカルデバッグ用: 上をコメントアウトしてこの行を有効化すること
+// !!!!ローカルデバッグ用!!!!: 上をコメントアウトしてこの行を有効化すること
 //getPlayerDataByName(process.argv[2]);
 
 // 選手名から選手データのページURLを得てgetPlayerDataByUrlを実行する関数
@@ -60,40 +60,61 @@ function getPlayerDataByUrl(url_p) {
       try {
         // オブジェクトに選手データを格納
         const $ = cheerio.load(response.body);
-        result.url = url;
-        result.name = $('li#pc_v_name').text(); //名前
-        result.team = $('li#pc_v_team').text(); //チーム名
-        result.no = $('li#pc_v_no').text();   //
+        result.url       = url;
+        result.name      = $('li#pc_v_name').text(); //名前
+        result.team      = $('li#pc_v_team').text(); //チーム名
+        result.no        = $('li#pc_v_no').text();   //
         result.photo_url = $('div#pc_v_photo > img').attr('src');
         var bio = $('section#pc_bio');
-        result.position = bio.find('tr').eq(0).find('td').text();
-        result.bt = bio.find('tr').eq(1).find('td').text();
-        result.hw = bio.find('tr').eq(2).find('td').text();
-        result.birthday = bio.find('tr').eq(3).find('td').text();
-        result.career = bio.find('tr').eq(4).find('td').text();
-        result.draft_y = bio.find('tr').eq(5).find('td').text();
+        result.position  = bio.find('tr').eq(0).find('td').text();
+        result.bt        = bio.find('tr').eq(1).find('td').text();
+        result.hw        = bio.find('tr').eq(2).find('td').text();
+        result.birthday  = bio.find('tr').eq(3).find('td').text();
+        result.career    = bio.find('tr').eq(4).find('td').text();
+        result.draft_y   = bio.find('tr').eq(5).find('td').text();
 
         // 2020年度の成績を取得
-        var stats = $('div#pc_stats_wrapper td.year:contains("2020")').parent();
-        //console.log(stats);
-        if (stats) {
+        var stats_2020 = $('div#pc_stats_wrapper td.year:contains("2020")').parent();
+
+        if ($('div#pc_stats_wrapper').is('td.year:contains("2020")')) { // 今年度出場しているか
           result.stats = {};
           if (result.position == "投手") {
-            result.stats.game = stats.find('td').eq(2).text();
-            result.stats.win  = stats.find('td').eq(3).text();
-            result.stats.lose = stats.find('td').eq(4).text();
-            result.stats.save = stats.find('td').eq(5).text();
-            result.stats.era  = stats.find('td').eq(24).text();
+            result.stats.game   = stats_2020.find('td').eq(2).text();
+            result.stats.win    = stats_2020.find('td').eq(3).text();
+            result.stats.lose   = stats_2020.find('td').eq(4).text();
+            result.stats.save   = stats_2020.find('td').eq(5).text();
+            result.stats.inning = stats_2020.find('td').eq(13).text();
+            result.stats.era    = stats_2020.find('td').eq(24).text();
           } else {
-            result.stats.game = stats.find('td').eq(2).text();
-            result.stats.ab   = stats.find('td').eq(4).text();
-            result.stats.avg  = stats.find('td').eq(20).text();
-            result.stats.slg  = stats.find('td').eq(21).text();
-            result.stats.obp  = stats.find('td').eq(22).text();
+            result.stats.game = stats_2020.find('td').eq(2).text();
+            result.stats.ab   = stats_2020.find('td').eq(4).text();
+            result.stats.h    = stats_2020.find('td').eq(6).text();
+            result.stats.hr   = stats_2020.find('td').eq(9).text();
+            result.stats.rbi  = stats_2020.find('td').eq(11).text();
+            result.stats.sb   = stats_2020.find('td').eq(12).text();
+            result.stats.avg  = stats_2020.find('td').eq(20).text();
+            result.stats.slg  = stats_2020.find('td').eq(21).text();
+            result.stats.obp  = stats_2020.find('td').eq(22).text();
+            // OPS計算
+            result.stats.ops  = Math.round((parseFloat(result.stats.slg) + parseFloat(result.stats.obp)) * 1000) / 1000;
           }
         } else {
           // 今シーズンの出場がない場合、stats propertyはnull
         }
+
+        // スペース除去
+        for (let key in result) {
+          // オブジェクトの第2階層目があるかどうか
+          if (typeof result[key] === "object") {
+            // 第２階層目を掃引
+            for (let key2 in result[key]) {
+              result[key][key2] = result[key][key2].toString().replace(/(^\s+)|(\s+$)/g, "");
+            }
+          } else {
+            // 第１階層目ならそのままスペース除去
+            result[key] = result[key].toString().replace(/(^\s+)|(\s+$)/g, "");
+          }
+        };
 
         console.log(result);
         resolve(result); //処理完了時にresultを返す
