@@ -76,7 +76,7 @@ function getPlayerDataByUrl(url_p) {
         // 2020年度の成績を取得
         var stats_2020 = $('div#pc_stats_wrapper td.year:contains("2020")').parent();
 
-        if ($('div#pc_stats_wrapper').is('td.year:contains("2020")')) { // 今年度出場しているか
+        if (stats_2020[0]) { // 今年度出場しているか
           result.stats = {};
           if (result.position == "投手") {
             result.stats.game   = stats_2020.find('td').eq(2).text();
