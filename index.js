@@ -85,7 +85,7 @@ function arrangeText(obj) {
                   "/回" + obj.stats.inning + "/防" + obj.stats.era;
     } else {
       res = res + "試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
-                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "\n"
+                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "\n" +
                   "OPS:" + obj.stats.ops;
     }
   } else {
