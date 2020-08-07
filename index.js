@@ -44,11 +44,11 @@ function handleEvent(event) {
     if (obj) {
       if (obj.length == 1) {
         // 選手情報が返ってきた場合
-        const message = arrangeText(obj);
+        const message = arrangeText(obj[0]);
         messages = [
                     {type: 'image', 
-                     originalContentUrl: obj.photo_url,
-                     previewImageUrl: obj.photo_url},
+                     originalContentUrl: obj[0].photo_url,
+                     previewImageUrl: obj[0].photo_url},
                     {type: 'text',
                      text: message}
                    ];
