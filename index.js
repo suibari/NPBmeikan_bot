@@ -62,7 +62,7 @@ function handleEvent(event) {
                         columns: []
                       }
                     };
-        for (let i=0; i++; i<obj.length) {
+        for (let i=0; i<obj.length; i++) {
           messages.template.columns[i]       = {}
           messages.template.columns[i].title = obj[i].name
           messages.template.columns[i].text  = obj[i].team;
