@@ -42,7 +42,7 @@ function handleEvent(event) {
     var messages;
 
     if (obj) {
-      if (obj.length == 1) {
+      if (!Array.isArray(obj)) {
         // 選手情報が返ってきた場合
         const message = arrangeText(obj[0]);
         messages = [
