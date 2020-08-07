@@ -83,8 +83,24 @@ function getPlayerDataByUrl(url_p) {
             result.stats.win    = stats_2020.find('td').eq(3).text();
             result.stats.lose   = stats_2020.find('td').eq(4).text();
             result.stats.save   = stats_2020.find('td').eq(5).text();
-            result.stats.inning = stats_2020.find('td').eq(13).text();
+            result.stats.inning = stats_2020.find('td').eq(13).text().replace(/\s+/g, ""); // 投球回のスペース除去
+            result.stats.h      = stats_2020.find('td').eq(15).text();
+            result.stats.bb     = stats_2020.find('td').eq(17).text();
             result.stats.era    = stats_2020.find('td').eq(24).text();
+            // WHIP計算
+            var ing_int  = Number(String(result.stats.inning).split(".")[0]); //投球回の整数部分を得る
+            var ing_frac = Number(String(result.stats.inning).split(".")[1]); //投球回の小数部分を得る
+            var h_p_bb   = parseInt(result.stats.h)+parseInt(result.stats.bb); //安打数＋四球
+            if (ing_frac == 2) {
+              // 投球回小数部:2/3 
+              result.stats.whip = Math.round((h_p_bb/(ing_int+2/3))* 100 ) / 100;
+            } else if (ing_frac == 1) {
+              // 投球回小数部:1/3
+              result.stats.whip = Math.round((h_p_bb/(ing_int+1/3))* 100 ) / 100;
+            } else {
+              // 投球回小数部なし
+              result.stats.whip = Math.round((h_p_bb/ ing_int     )* 100 ) / 100;
+            }
           } else {
             result.stats.game = stats_2020.find('td').eq(2).text();
             result.stats.ab   = stats_2020.find('td').eq(4).text();

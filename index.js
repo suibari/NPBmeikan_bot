@@ -82,11 +82,10 @@ function arrangeText(obj) {
     res = res + "<今シーズンの成績>\n"
     if (obj.position == "投手") {
       res = res + "試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
-                  "/回" + obj.stats.inning + "/防" + obj.stats.era;
+                  "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip;
     } else {
       res = res + "試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
-                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "\n" +
-                  "OPS:" + obj.stats.ops;
+                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops;
     }
   } else {
     res = res + "<今シーズン未出場>"
