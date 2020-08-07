@@ -40,16 +40,39 @@ function handleEvent(event) {
   //const echo = { type: 'text', text: event.message.text };
   require('./scraping.js').getPlayerData(event.message.text).then( obj => {
     var messages;
+
     if (obj) {
-      // 選手情報が返ってきた場合
-      const message = arrangeText(obj);
-      messages = [
-                  {type: 'image', 
-                   originalContentUrl: obj.photo_url,
-                   previewImageUrl: obj.photo_url},
-                  {type: 'text',
-                   text: message}
-                 ];
+      if (obj.length == 1) {
+        // 選手情報が返ってきた場合
+        const message = arrangeText(obj);
+        messages = [
+                    {type: 'image', 
+                     originalContentUrl: obj.photo_url,
+                     previewImageUrl: obj.photo_url},
+                    {type: 'text',
+                     text: message}
+                   ];
+      } else {
+        // 複数選手検索結果が返ってきた場合
+        messages = [
+                    {
+                      type: 'template',
+                      template: {
+                        type: 'carousel',
+                        columns: []
+                      }
+                    }
+                   ];
+        for (i=0; i++; i<obj.length) {
+          messages[0].template.columns[i]       = {}
+          messages[0].template.columns[i].title = obj[i].name
+          messages[0].template.columns[i].text  = obj[i].team;
+          messages[0].template.columns[i].actions          = [{}];
+          messages[0].template.columns[i].actions[0].type  = "message";
+          messages[0].template.columns[i].actions[0].label = "この選手を検索";
+          messages[0].template.columns[i].actions[0].text  = obj[i].name;
+        }
+      }
     } else {
       // 何も返ってこなかった場合
       messages = {type: 'text',

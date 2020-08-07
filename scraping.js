@@ -25,18 +25,33 @@ function getPlayerDataByName(q) {
       }
       try {
         var url_player;
+        var res_search = [];
 
         const $ = cheerio.load(response.body);
-        url_player = $('a.player_unit_1', '#pl_result_list').attr('href');
+
+        //検索結果の配列取得
+        $('a.player_unit_1', '#pl_result_list').each((i, elem) => {
+          res_search[i] = {};
+          //res_search[i].position = $(elem).find('dd.pos').text().replace(/\s+/g, "");  // ポジション&背番号取得&スペース除去
+          res_search[i].team     = $(elem).find('dd.team').text().replace(/\s+/g, ""); // チーム取得&スペース除去
+          res_search[i].name     = $(elem).find('dd.name').text().replace(/\s+/g, ""); // 名前取得&スペース除去
+          res_search[i].url_p    = $(elem).attr('href');
+        })
+
+        //url_player = $('a.player_unit_1', '#pl_result_list').attr('href');
         //console.log(url_player);
-        if (url_player) {
-          getPlayerDataByUrl(url_player).then(player_info => {
+        if (res_search.length == 1) {
+          // 一人だけ検索ヒットした場合、その選手のデータ取得
+          getPlayerDataByUrl(res_search[0].url_p).then(player_info => {
             //getPlayerDataByUrl関数実行完了時の処理
             resolve(player_info); // 呼び出し元に選手情報を返す
-            //console.log(player_info);
           });
+        } else if (res_search.length > 1) {
+          // 複数人検索ヒットした場合、検索結果を返す
+          //console.log(res_search);
+          resolve(res_search);
         } else {
-          // 検索で引っかからない場合、nullを返す
+          // 検索ヒットしない場合、nullを返す
           resolve(null);
         }
 
