@@ -57,7 +57,7 @@ function handleEvent(event) {
         messages = [
                     {
                       type: 'template',
-                      altText: "このデバイスは複数選手検索に被対応です。",
+                      altText: "このデバイスは複数選手検索に非対応です。",
                       template: {
                         type: 'carousel',
                         columns: []
