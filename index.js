@@ -54,24 +54,22 @@ function handleEvent(event) {
                    ];
       } else {
         // 複数選手検索結果が返ってきた場合
-        messages = [
-                    {
+        messages =  {
                       type: 'template',
                       altText: "このデバイスは複数選手検索に非対応です。",
                       template: {
                         type: 'carousel',
                         columns: []
                       }
-                    }
-                   ];
+                    };
         for (let i=0; i++; i<obj.length) {
-          messages[0].template.columns[i]       = {}
-          messages[0].template.columns[i].title = obj[i].name
-          messages[0].template.columns[i].text  = obj[i].team;
-          messages[0].template.columns[i].actions          = [{}];
-          messages[0].template.columns[i].actions[0].type  = "message";
-          messages[0].template.columns[i].actions[0].label = "この選手を検索";
-          messages[0].template.columns[i].actions[0].text  = obj[i].name;
+          messages.template.columns[i]       = {}
+          messages.template.columns[i].title = obj[i].name
+          messages.template.columns[i].text  = obj[i].team;
+          messages.template.columns[i].actions          = [{}];
+          messages.template.columns[i].actions[0].type  = "message";
+          messages.template.columns[i].actions[0].label = "この選手を検索";
+          messages.template.columns[i].actions[0].text  = obj[i].name;
         }
       }
     } else {
