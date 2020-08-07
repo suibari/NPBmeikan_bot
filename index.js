@@ -71,6 +71,7 @@ function handleEvent(event) {
           messages.template.columns[i].actions[0].label = "この選手を検索";
           messages.template.columns[i].actions[0].text  = obj[i].name;
         }
+        console.log(messages);
       }
     } else {
       // 何も返ってこなかった場合
