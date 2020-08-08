@@ -42,8 +42,51 @@ function handleEvent(event) {
     var messages;
 
     if (obj) {
-      if (!Array.isArray(obj)) {
-        // 選手情報が返ってきた場合
+      if (Array.isArray(obj)) {
+        // 複数選手検索結果(Array)が返ってきた場合
+        // 選手数を10で割った数(切り上げ)を計算
+        const msg_length = Math.ceil(obj.length / 10);
+        // その数分、messages配列にオブジェクトを作って格納する
+        for (let j=0; j<msg_length; j++) {
+          messages[j] = {
+            type: 'template',
+            altText: "複数選手検索結果",
+            template: {
+              type: 'carousel',
+              columns: []
+            }
+          };
+          for (let i=0; i<obj.length; i++) {
+            messages[j].template.columns[i]       = {}
+            messages[j].template.columns[i].title = obj[i].name
+            messages[j].template.columns[i].text  = obj[i].team;
+            messages[j].template.columns[i].actions          = [{}];
+            messages[j].template.columns[i].actions[0].type  = "message";
+            messages[j].template.columns[i].actions[0].label = "この選手を検索";
+            messages[j].template.columns[i].actions[0].text  = obj[i].name;
+          }
+        };
+
+        //messages =  {
+        //  type: 'template',
+        //  altText: "複数選手検索結果",
+        //  template: {
+        //    type: 'carousel',
+        //    columns: []
+        //  }
+        //};
+        //for (let i=0; i<obj.length; i++) {
+        //  messages.template.columns[i]       = {}
+        //  messages.template.columns[i].title = obj[i].name
+        //  messages.template.columns[i].text  = obj[i].team;
+        //  messages.template.columns[i].actions          = [{}];
+        //  messages.template.columns[i].actions[0].type  = "message";
+        //  messages.template.columns[i].actions[0].label = "この選手を検索";
+        //  messages.template.columns[i].actions[0].text  = obj[i].name;
+        //}
+        //console.log(messages);
+      } else {
+        // 選手情報(object)が返ってきた場合
         const message = arrangeText(obj);
         messages = [
                     {type: 'image', 
@@ -52,26 +95,6 @@ function handleEvent(event) {
                     {type: 'text',
                      text: message}
                    ];
-      } else {
-        // 複数選手検索結果が返ってきた場合
-        messages =  {
-                      type: 'template',
-                      altText: "このデバイスは複数選手検索に非対応です。",
-                      template: {
-                        type: 'carousel',
-                        columns: []
-                      }
-                    };
-        for (let i=0; i<obj.length; i++) {
-          messages.template.columns[i]       = {}
-          messages.template.columns[i].title = obj[i].name
-          messages.template.columns[i].text  = obj[i].team;
-          messages.template.columns[i].actions          = [{}];
-          messages.template.columns[i].actions[0].type  = "message";
-          messages.template.columns[i].actions[0].label = "この選手を検索";
-          messages.template.columns[i].actions[0].text  = obj[i].name;
-        }
-        console.log(messages);
       }
     } else {
       // 何も返ってこなかった場合
