@@ -118,7 +118,7 @@ function arrangeText(obj) {
   res = obj.name + "\n" +
         obj.team + " #" + obj.no + "\n" + 
         obj.position + "/" + obj.bt + "\n" +
-        obj.birthday + "生まれ (" + result.age + "歳)\n" +
+        obj.birthday + "生まれ (" + obj.age + "歳)\n" +
         obj.career   + (obj.draft_y ? (" (" + obj.draft_y + ")") : "") + "\n" + 
         "\n";
   if (obj.stats) {
