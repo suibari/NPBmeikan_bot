@@ -45,8 +45,9 @@ function handleEvent(event) {
       if (Array.isArray(obj)) {
         // 複数選手検索結果(Array)が返ってきた場合
         messages = [];
-        // 選手数を10で割った数(切り上げ)を計算
-        const msg_length = Math.ceil(obj.length / 10);
+        const msg_length  = Math.ceil(obj.length / 10); // 選手数を10で割った商+1を計算
+        const lastmsg_num = obj.length - Math.floor(obj.length / 10); // 選手数を10で割った余りを計算
+        var i_max;
         // その数分、messages配列にオブジェクトを作って格納する
         for (let j=0; j<msg_length; j++) {
           messages[j] = {
@@ -57,7 +58,12 @@ function handleEvent(event) {
               columns: []
             }
           };
-          for (let i=0; i<10; i++) {
+          if (j == msg_length-1) { // 現在作成してるオブジェクトが最後かどうか
+            i_max = lastmsg_num;
+          } else {
+            i_max = 10;
+          };
+          for (let i=0; i<i_max; i++) {
             messages[j].template.columns[i]       = {}
             messages[j].template.columns[i].title = obj[j*10+i].name;
             messages[j].template.columns[i].text  = obj[j*10+i].team;
