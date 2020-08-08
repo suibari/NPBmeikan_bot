@@ -44,6 +44,7 @@ function handleEvent(event) {
     if (obj) {
       if (Array.isArray(obj)) {
         // 複数選手検索結果(Array)が返ってきた場合
+        messages = [];
         // 選手数を10で割った数(切り上げ)を計算
         const msg_length = Math.ceil(obj.length / 10);
         // その数分、messages配列にオブジェクトを作って格納する
