@@ -59,7 +59,7 @@ function handleEvent(event) {
           };
           for (let i=0; i<10; i++) {
             messages[j].template.columns[i]       = {}
-            messages[j].template.columns[i].title = obj[j*10+i].name
+            messages[j].template.columns[i].title = obj[j*10+i].name;
             messages[j].template.columns[i].text  = obj[j*10+i].team;
             messages[j].template.columns[i].actions          = [{}];
             messages[j].template.columns[i].actions[0].type  = "message";
