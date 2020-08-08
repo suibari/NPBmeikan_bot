@@ -2,7 +2,6 @@
 
 const line    = require('@line/bot-sdk');
 const express = require('express');
-const moment  = require('moment');
 
 // create LINE SDK config from env variables
 const config = {
@@ -51,7 +50,7 @@ function handleEvent(event) {
 
         if (msg_length <= 5) {
           // 検索結果が50人以下なので、LINEで表示可能
-          
+
           // 選手数を10で割った商+1 分、messages配列にオブジェクトを作って格納する
           for (let j=0; j<msg_length; j++) {
             messages[j] = {
@@ -116,12 +115,11 @@ app.listen(port, () => {
 function arrangeText(obj) {
   var res;
 
-  var dst = moment(obj.birthday, "YYYY年MM月DD日").format();
   res = obj.name + "\n" +
         obj.team + " #" + obj.no + "\n" + 
         obj.position + "/" + obj.bt + "\n" +
-        obj.birthday + "生まれ(" + moment().diff(dst, 'years') + "歳)\n" +
-        obj.career   + " (" + obj.draft_y + ")\n" + 
+        obj.birthday + "生まれ (" + result.age + "歳)\n" +
+        obj.career   + (obj.draft_y ? (" (" + obj.draft_y + ")") : "") + "\n" + 
         "\n";
   if (obj.stats) {
     res = res + "<今シーズンの成績>\n"

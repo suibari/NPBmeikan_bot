@@ -2,6 +2,7 @@
 
 const request = require('request');
 const cheerio = require('cheerio');
+const moment  = require('moment');
 const url_base = 'https://npb.jp/';
 const url_srch = 'bis/players/search/result?active_flg=Y&search_keyword='; // npb公式選手検索
 
@@ -139,13 +140,17 @@ function getPlayerDataByUrl(url_p) {
           if (typeof result[key] === "object") {
             // 第２階層目を掃引
             for (let key2 in result[key]) {
-              result[key][key2] = result[key][key2].toString().replace(/(^\s+)|(\s+$)/g, "");
+              result[key][key2] = result[key][key2].toString().replace(/\s{2,}/g, ""); // 2文字以上連続するスペースor改行を削除
             }
           } else {
             // 第１階層目ならそのままスペース除去
-            result[key] = result[key].toString().replace(/(^\s+)|(\s+$)/g, "");
+            result[key] = result[key].toString().replace(/\s{2,}/g, ""); // 2文字以上連続するスペースor改行を削除
           }
         };
+
+        // 誕生日算出
+        var date_bth = moment(result.birthday, "YYYY年MM月DD日").format();
+        result.age   = moment().diff(date_bth, 'years');
 
         console.log(result);
         resolve(result); //処理完了時にresultを返す
