@@ -115,7 +115,7 @@ app.listen(port, () => {
 function arrangeText(obj) {
   var res;
 
-  res = obj.name + "\n" +
+  res = obj.name + " (" + obj.kana + ")\n" +
         obj.team + " #" + obj.no + "\n" + 
         obj.position + "/" + obj.bt + "\n" +
         obj.birthday + "生まれ (" + obj.age + "歳)\n" +

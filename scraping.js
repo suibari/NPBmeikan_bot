@@ -79,7 +79,8 @@ function getPlayerDataByUrl(url_p) {
         result.url       = url;
         result.name      = $('li#pc_v_name').text(); //名前
         result.team      = $('li#pc_v_team').text(); //チーム名
-        result.no        = $('li#pc_v_no').text();   //
+        result.no        = $('li#pc_v_no').text();   //背番号
+        result.kana      = $('li#pc_v_kana').text(); //ふりがな
         result.photo_url = $('div#pc_v_photo > img').attr('src');
         var bio = $('section#pc_bio');
         result.position  = bio.find('tr').eq(0).find('td').text();
