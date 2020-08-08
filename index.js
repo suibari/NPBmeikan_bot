@@ -46,7 +46,7 @@ function handleEvent(event) {
         // 複数選手検索結果(Array)が返ってきた場合
         messages = [];
         const msg_length  = Math.ceil(obj.length / 10); // 選手数を10で割った商+1を計算
-        const lastmsg_num = obj.length - Math.floor(obj.length / 10); // 選手数を10で割った余りを計算
+        const lastmsg_num = obj.length - Math.floor(obj.length / 10) * 10; // 選手数を10で割った余りを計算
         var i_max;
         // その数分、messages配列にオブジェクトを作って格納する
         for (let j=0; j<msg_length; j++) {
