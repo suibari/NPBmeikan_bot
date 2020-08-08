@@ -57,14 +57,14 @@ function handleEvent(event) {
               columns: []
             }
           };
-          for (let i=0; i<obj.length; i++) {
+          for (let i=0; i<10; i++) {
             messages[j].template.columns[i]       = {}
-            messages[j].template.columns[i].title = obj[i].name
-            messages[j].template.columns[i].text  = obj[i].team;
+            messages[j].template.columns[i].title = obj[j*10+i].name
+            messages[j].template.columns[i].text  = obj[j*10+i].team;
             messages[j].template.columns[i].actions          = [{}];
             messages[j].template.columns[i].actions[0].type  = "message";
             messages[j].template.columns[i].actions[0].label = "この選手を検索";
-            messages[j].template.columns[i].actions[0].text  = obj[i].name;
+            messages[j].template.columns[i].actions[0].text  = obj[j*10+i].name;
           }
         };
 
