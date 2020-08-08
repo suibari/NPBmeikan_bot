@@ -48,50 +48,42 @@ function handleEvent(event) {
         const msg_length  = Math.ceil(obj.length / 10); // 選手数を10で割った商+1を計算
         const lastmsg_num = obj.length - Math.floor(obj.length / 10) * 10; // 選手数を10で割った余りを計算
         var i_max;
-        // その数分、messages配列にオブジェクトを作って格納する
-        for (let j=0; j<msg_length; j++) {
-          messages[j] = {
-            type: 'template',
-            altText: "複数選手検索結果",
-            template: {
-              type: 'carousel',
-              columns: []
+
+        if (msg_length <= 5) {
+          // 検索結果が50人以下なので、LINEで表示可能
+          
+          // 選手数を10で割った商+1 分、messages配列にオブジェクトを作って格納する
+          for (let j=0; j<msg_length; j++) {
+            messages[j] = {
+              type: 'template',
+              altText: "複数選手検索結果",
+              template: {
+                type: 'carousel',
+                columns: []
+              }
+            };
+            if (j == msg_length-1) { // 現在作成してるオブジェクトが最後かどうか
+              i_max = lastmsg_num;
+            } else {
+              i_max = 10;
+            };
+            for (let i=0; i<i_max; i++) {
+              messages[j].template.columns[i]       = {}
+              messages[j].template.columns[i].title = obj[j*10+i].name;
+              messages[j].template.columns[i].text  = obj[j*10+i].team;
+              messages[j].template.columns[i].actions          = [{}];
+              messages[j].template.columns[i].actions[0].type  = "message";
+              messages[j].template.columns[i].actions[0].label = "この選手を検索";
+              messages[j].template.columns[i].actions[0].text  = obj[j*10+i].name;
             }
           };
-          if (j == msg_length-1) { // 現在作成してるオブジェクトが最後かどうか
-            i_max = lastmsg_num;
-          } else {
-            i_max = 10;
-          };
-          for (let i=0; i<i_max; i++) {
-            messages[j].template.columns[i]       = {}
-            messages[j].template.columns[i].title = obj[j*10+i].name;
-            messages[j].template.columns[i].text  = obj[j*10+i].team;
-            messages[j].template.columns[i].actions          = [{}];
-            messages[j].template.columns[i].actions[0].type  = "message";
-            messages[j].template.columns[i].actions[0].label = "この選手を検索";
-            messages[j].template.columns[i].actions[0].text  = obj[j*10+i].name;
-          }
+          //console.log(messages);
+        } else {
+          // 検索結果が50人より大きいので、LINEで表示不可。エラーを返す
+          messages = {type: 'text',
+                      text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
         };
-
-        //messages =  {
-        //  type: 'template',
-        //  altText: "複数選手検索結果",
-        //  template: {
-        //    type: 'carousel',
-        //    columns: []
-        //  }
-        //};
-        //for (let i=0; i<obj.length; i++) {
-        //  messages.template.columns[i]       = {}
-        //  messages.template.columns[i].title = obj[i].name
-        //  messages.template.columns[i].text  = obj[i].team;
-        //  messages.template.columns[i].actions          = [{}];
-        //  messages.template.columns[i].actions[0].type  = "message";
-        //  messages.template.columns[i].actions[0].label = "この選手を検索";
-        //  messages.template.columns[i].actions[0].text  = obj[i].name;
-        //}
-        //console.log(messages);
+        
       } else {
         // 選手情報(object)が返ってきた場合
         const message = arrangeText(obj);
@@ -104,7 +96,7 @@ function handleEvent(event) {
                    ];
       }
     } else {
-      // 何も返ってこなかった場合
+      // 何も返ってこなかった場合、エラーを返す。
       messages = {type: 'text',
                   text: "選手が見つかりませんでした。"};
     }
