@@ -7,7 +7,7 @@ const pool     = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-const query    = `SELECT * FROM player WHERE data->>'name' LIKE '%$1%' ;`
+const query    = `SELECT * FROM player WHERE data->>'name' LIKE '%' || $1 || '%' ;`;
 
 // create LINE SDK config from env variables
 const config = {
