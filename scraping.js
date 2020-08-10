@@ -94,7 +94,7 @@ function getPlayerDataByUrl(url_p) {
     
       // オブジェクトに選手データを格納
       result.url       = url_p_full;
-      result.name      = $('li#pc_v_name').text(); //名前
+      result.name      = $('li#pc_v_name').text().replace(/\s+/g, ""); //名前、スペース除去
       result.team      = $('li#pc_v_team').text(); //チーム名
       result.no        = $('li#pc_v_no').text();   //背番号
       result.kana      = $('li#pc_v_kana').text(); //ふりがな
