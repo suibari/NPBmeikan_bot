@@ -63,6 +63,13 @@ function getPlayerDataByName(q) {
 };
 
 // 選手データページURLからデータ取得する関数
+exports.getPlayerDataByURL = function (url_p) {
+  return new Promise(function (resolve, reject) {
+    getPlayerDataByUrl(url_p).then(res => {
+      resolve(res);
+    })
+  })
+}
 function getPlayerDataByUrl(url_p) {
   return new Promise((resolve, reject) => {
     const url_p_full = url_base + url_p;
