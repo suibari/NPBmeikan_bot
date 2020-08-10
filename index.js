@@ -44,6 +44,8 @@ function handleEvent(event) {
   // SQL-select
   pool.query(query, [event.message.text])
   .then((res) => {
+    var messages;
+    
     if (res.rowCount > 1) {
       // 複数選手hitした場合
       messages = [];
