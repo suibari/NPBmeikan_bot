@@ -1,7 +1,7 @@
 'use strict';
 
-const line    = require('@line/bot-sdk');
-const express = require('express');
+const line     = require('@line/bot-sdk');
+const express  = require('express');
 const { Pool } = require('pg');
 const pool     = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -12,7 +12,7 @@ const query    = `SELECT * FROM player WHERE data->>'name' LIKE '%' || $1 || '%'
 // create LINE SDK config from env variables
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.CHANNEL_SECRET,
+  channelSecret: process.env.CHANNEL_SECRET
 };
 
 // create LINE SDK client
@@ -66,9 +66,14 @@ function handleEvent(event) {
               columns: []
             }
           };
-          if (j == msg_length-1) { // 現在作成してるmessageオブジェクトが最後ではない
+          if ((j == msg_length-1) && (lastmsg_num == 0)) {
+            // 現在が最後の10である
+            i_max = 10;
+          } else if (j == msg_length-1) {
+            // 現在が最後の1～9である
             i_max = lastmsg_num;
           } else {
+            // 現在が最後でない
             i_max = 10;
           };
           //var i = 0;
