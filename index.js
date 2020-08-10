@@ -49,7 +49,7 @@ function handleEvent(event) {
     if (res.rowCount > 1) {
       // 複数選手hitした場合
       messages = [];
-      const msg_length  = Math.ceil(res.rowCount / 10); // 選手数を10で割った商+1を計算
+      const msg_length  = Math.ceil(res.rowCount / 10); // 選手数を10で割った商(切り上げ)を計算
       const lastmsg_num = res.rowCount - Math.floor(res.rowCount / 10) * 10; // 選手数を10で割った余りを計算
       var i_max;
 
@@ -66,25 +66,13 @@ function handleEvent(event) {
               columns: []
             }
           };
-          if (j == msg_length-1) { // 現在作成してるオブジェクトが最後かどうか
+          if (j == msg_length-1) { // 現在作成してるmessageオブジェクトが最後ではない
             i_max = lastmsg_num;
           } else {
             i_max = 10;
           };
-          var i = 0;
-          do {
-            messages[j].template.columns[i]       = {};
-            messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
-            messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
-            messages[j].template.columns[i].actions          = [{}];
-            messages[j].template.columns[i].actions[0].type  = "message";
-            messages[j].template.columns[i].actions[0].label = "この選手を検索";
-            messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
-            messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
-            i += i;
-          } while (i < i_max);
-
-          //for (let i=0; i<i_max; i++) {
+          //var i = 0;
+          //do {
           //  messages[j].template.columns[i]       = {};
           //  messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
           //  messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
@@ -93,7 +81,19 @@ function handleEvent(event) {
           //  messages[j].template.columns[i].actions[0].label = "この選手を検索";
           //  messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
           //  messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
-          //}
+          //  i += i;
+          //} while (i < i_max);
+
+          for (let i=0; i<i_max; i++) {
+            messages[j].template.columns[i]       = {};
+            messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
+            messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
+            messages[j].template.columns[i].actions          = [{}];
+            messages[j].template.columns[i].actions[0].type  = "message";
+            messages[j].template.columns[i].actions[0].label = "この選手を検索";
+            messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
+            messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
+          }
         };
         //console.log(messages);
       } else {
