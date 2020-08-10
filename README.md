@@ -29,7 +29,7 @@ NPB選手名鑑 LINE-bot
 
 ## Demo
 
-<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">たのしい <a href="https://t.co/I5lnlHmJHd">pic.twitter.com/I5lnlHmJHd</a></p>&mdash; すいばり@&#39;19年度3勝4敗⚾️ (@Suibari_cha) <a href="https://twitter.com/Suibari_cha/status/1292715250593095682?ref_src=twsrc%5Etfw">August 10, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+[![thumbnail](https://pbs.twimg.com/ext_tw_video_thumb/1292714456053460992/pu/img/1mj0K1JNXG8lUAVn.jpg)](https://video.twimg.com/ext_tw_video/1292714456053460992/pu/vid/720x1280/Qs7hwHNA3Zq5Aayk.mp4)
 
 ## VS. 
 
