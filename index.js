@@ -42,7 +42,7 @@ function handleEvent(event) {
   }
 
   // SQL-select
-  pool.query(query, event.message.text)
+  pool.query(query, [event.message.text])
   .then((res) => {
     if (res.rowCount > 1) {
       // 複数選手hitした場合
