@@ -45,7 +45,7 @@ function handleEvent(event) {
   pool.query(query, [event.message.text])
   .then((res) => {
     var messages;
-    
+
     if (res.rowCount > 1) {
       // 複数選手hitした場合
       messages = [];
@@ -71,7 +71,8 @@ function handleEvent(event) {
           } else {
             i_max = 10;
           };
-          for (let i=0; i<i_max; i++) {
+          var i = 0;
+          do {
             messages[j].template.columns[i]       = {};
             messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
             messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
@@ -80,7 +81,19 @@ function handleEvent(event) {
             messages[j].template.columns[i].actions[0].label = "この選手を検索";
             messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
             messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
-          }
+            i += i;
+          } while (i < i_max);
+
+          //for (let i=0; i<i_max; i++) {
+          //  messages[j].template.columns[i]       = {};
+          //  messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
+          //  messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
+          //  messages[j].template.columns[i].actions          = [{}];
+          //  messages[j].template.columns[i].actions[0].type  = "message";
+          //  messages[j].template.columns[i].actions[0].label = "この選手を検索";
+          //  messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
+          //  messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
+          //}
         };
         //console.log(messages);
       } else {
