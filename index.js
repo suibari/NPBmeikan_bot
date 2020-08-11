@@ -267,8 +267,11 @@ function detectTeamAndNum(text) {
     team: null,
     num:  null
   };
-  for (let key in teams) result.team = checkInclude(text, teams[key]); // textにチーム名が入っているか判定
-  result.num = detectNum(text);                                    // textに数値が入っているか判定
+  for (let key in teams) {      // textにチーム名が入っているか判定
+    result.team = checkInclude(text, teams[key]);
+    if (result.team) break;
+  }
+  result.num = detectNum(text); // textに数値が入っているか判定
   return result;
 
   // textに背番号が含まれているか判定し、含まれていたら背番号を返す関数
@@ -281,11 +284,11 @@ function detectTeamAndNum(text) {
   // textがチーム名配列に含まれているか判定し、含まれていたらチーム名を返す関数
   function checkInclude(text, matchArary) {
     var inc_team = null;
-    matchArary.some(function(key){
-      if(text.match(key)) {
+    matchArary.forEach(e => {
+      if(text.indexOf(e) != -1) {
         inc_team = matchArary[0];
-        return inc_team;
       }
     });
+    return inc_team;
   };
 };
