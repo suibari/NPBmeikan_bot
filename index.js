@@ -46,7 +46,7 @@ function handleEvent(event) {
   // SQL-selet (チーム名&背番号検索)
   var dct_tn = detectTeamAndNum(event.message.text);
   if ((dct_tn.team) && (dct_tn.num)) {
-    pool.query(query_team_no, [dct_tn.team, dct_tn.num])
+    pool.query(query_team_no, [[dct_tn.team, dct_tn.num]])
     .then((res) => {
       var messages;
       const message = arrangeText(res.rows[0].data);
