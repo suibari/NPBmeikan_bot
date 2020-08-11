@@ -281,6 +281,7 @@ function detectTeamAndNum(text) {
 
   // textがチーム名配列に含まれているか判定し、含まれていたらチーム名を返す関数
   function checkInclude(text, matchArary) {
+    var inc_team = null;
     matchArary.some(function(key){
       if(text.match(key)) {
         inc_team = matchArary[0];
