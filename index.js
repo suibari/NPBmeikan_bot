@@ -275,8 +275,7 @@ function detectTeamAndNum(text) {
   function detectNum(text) {
     // 全角数字を半角に直す
     text = text.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 65248));
-    num  = text.replace(/[^0-9]/g, "");
-    return num;
+    return text.replace(/[^0-9]/g, "");
   };
 
   // textがチーム名配列に含まれているか判定し、含まれていたらチーム名を返す関数
