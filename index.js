@@ -264,8 +264,8 @@ function detectTeamAndNum(text) {
   };
   
   var result = {
-    team = null,
-    num  = null
+    team: null,
+    num:  null
   };
   for (key in teams) result.team = checkInclude(text, teams[key]); // textにチーム名が入っているか判定
   result.num = detectNum(text);                                    // textに数値が入っているか判定
