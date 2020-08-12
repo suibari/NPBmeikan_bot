@@ -71,6 +71,8 @@ function handleEvent(event) {
           text: "選手が見つかりませんでした。"
         };
       }
+      // use reply API
+      return client.replyMessage(event.replyToken, messages);
     })
     .catch(err => console.error('Error executing query', err.stack));
 
@@ -147,12 +149,11 @@ function handleEvent(event) {
           text: "選手が見つかりませんでした。"
         };
       }
+      // use reply API
+      return client.replyMessage(event.replyToken, messages);
     })
     .catch(err => console.error('Error executing query', err.stack));
   }
-
-  // use reply API
-  return client.replyMessage(event.replyToken, messages);
 }
 
   // old: 直接スクレイピングをしていたやり方
