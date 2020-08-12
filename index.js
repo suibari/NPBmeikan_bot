@@ -167,7 +167,7 @@ function arrangeText(obj) {
 
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  return messages = [
+  return [
     { 
       type: 'image', 
       originalContentUrl: obj.photo_url,
