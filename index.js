@@ -167,6 +167,126 @@ function arrangeText(obj) {
 
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
+  return {
+    "type": "bubble",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": obj.name,
+              "size": "xxl",
+              "weight": "bold",
+              "flex": 0
+            },
+            {
+              "type": "text",
+              "text": obj.kana,
+              "size": "md",
+              "wrap": true,
+              "color": "#aaaaaa",
+              "gravity": "bottom"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": obj.team + " #" + obj.no,
+          "size": "md",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "spacing": "sm",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "baseline",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Profile",
+                  "color": "#aaaaaa",
+                  "size": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": obj.position + "/" + obj.bt + "\n" +
+                          obj.birthday + "生まれ (" + obj.age + "歳)\n" +
+                          obj.career   + (obj.draft_y ? (" (" + obj.draft_y + ")") : ""),
+                  "wrap": true,
+                  "size": "md",
+                  "flex": 5
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "baseline",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "STATS",
+                  "color": "#aaaaaa",
+                  "size": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": (obj.position == "投手") ?
+                          ("試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
+                          "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip) :
+                          ("試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
+                          "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops),
+                  "wrap": true,
+                  "size": "md",
+                  "flex": 5
+                }
+              ],
+              "spacing": "sm"
+            }
+          ],
+          "margin": "lg"
+        }
+      ]
+    },
+    "footer": {
+      "type": "box",
+      "layout": "horizontal",
+      "spacing": "sm",
+      "contents": [
+        {
+          "type": "image",
+          "url": obj.photo_url,
+          "flex": 0,
+          "size": "xs"
+        },
+        {
+          "type": "text",
+          "text": obj.url,
+          "wrap": true,
+          "color": "#0033cc",
+          "decoration": "underline"
+        }
+      ],
+      "flex": 0,
+      "action": {
+        "type": "uri",
+        "label": "action",
+        "uri": obj.url
+      }
+    },
+    "size": "giga"
+  }
+
   return [
     { 
       type: 'image', 
