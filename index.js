@@ -51,7 +51,7 @@ function handleEvent(event) {
     // SQL-selet (チーム名&背番号検索)
     pool.query(query_team_no, [dct_tn.team, dct_tn.num])
     .then((res) => {
-      if (rowCount > 0) {
+      if (res.rowCount > 0) {
         const message = arrangeText(res.rows[0].data);
         messages = [
           { 
