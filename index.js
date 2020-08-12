@@ -43,14 +43,14 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
   
+  var messages;
   var dct_tn = detectTeamAndNum(event.message.text);
+
   if ((dct_tn.team) && (dct_tn.num)) {
     // メッセージにチーム名および背番号が含まれている
     // SQL-selet (チーム名&背番号検索)
     pool.query(query_team_no, [dct_tn.team, dct_tn.num])
     .then((res) => {
-      var messages;
-
       if (rowCount > 0) {
         const message = arrangeText(res.rows[0].data);
         messages = [
@@ -79,8 +79,6 @@ function handleEvent(event) {
     // SQL-select (選手名検索)
     pool.query(query_name, [event.message.text])
     .then((res) => {
-      var messages;
-
       if (res.rowCount > 1) {
         // 複数選手hitした場合
         messages = [];
