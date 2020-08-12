@@ -67,7 +67,7 @@ function handleEvent(event) {
   } else {
     // メッセージは選手名検索である
     // SQL-select (選手名検索)
-    const query_name = require('./itaiji.js').getQuery(event.message.text); // 異体字を考慮してLIKE～ORしたクエリを生成
+    const query_name = require('./itaiji.js').getQuery(escapeSQL(event.message.text)); // メタエスケープ＆異体字を考慮してLIKE～ORしたクエリを生成
     pool.query(query_name)
     .then((res) => {
       if (res.rowCount > 1) {
@@ -359,3 +359,11 @@ function detectTeamAndNum(text) {
     return inc_team;
   };
 };
+
+function escapeSQL(str) {
+  return str.replace(/'/g,  "''")
+            .replace(/"/g,  '\"')
+            .replace(/\\/g, "\\")
+            .replace(/_/g,  "\_")
+            .replace(/%/g,  "\%");
+}
