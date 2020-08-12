@@ -8,7 +8,7 @@ const pool     = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 const query_name    = `SELECT * FROM player WHERE data->>'name' LIKE '%' || $1 || '%' ;`;
-const query_team_no = `SELECT * FROM player WHERE data->>'team' = '$1' AND data->>'no' = '$2';`;
+const query_team_no = `SELECT * FROM player WHERE data->>'team' = $1 AND data->>'no' = $2 ;`;
 //const query    = `SELECT * FROM player WHERE data->>'name' SIMILAR TO '%' || $1 || '%' ;`
 
 // create LINE SDK config from env variables
@@ -46,7 +46,7 @@ function handleEvent(event) {
   // SQL-selet (チーム名&背番号検索)
   var dct_tn = detectTeamAndNum(event.message.text);
   if ((dct_tn.team) && (dct_tn.num)) {
-    pool.query(query_team_no, [[dct_tn.team], [dct_tn.num]])
+    pool.query(query_team_no, [dct_tn.team, dct_tn.num])
     .then((res) => {
       var messages;
       const message = arrangeText(res.rows[0].data);
