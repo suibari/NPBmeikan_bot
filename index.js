@@ -167,7 +167,7 @@ function arrangeText(obj) {
 
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  return {
+  const contents = {
     "type": "bubble",
     "body": {
       "type": "box",
@@ -285,7 +285,12 @@ function createMsgObj(obj) {
       }
     },
     "size": "giga"
-  }
+  };
+  return {
+    type: "flex",
+    altText: obj.name,
+    contents: contents
+  };
 
   return [
     { 
