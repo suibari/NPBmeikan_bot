@@ -43,108 +43,119 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
   
-  // SQL-selet (チーム名&背番号検索)
   var dct_tn = detectTeamAndNum(event.message.text);
   if ((dct_tn.team) && (dct_tn.num)) {
+    // メッセージにチーム名および背番号が含まれている
+    // SQL-selet (チーム名&背番号検索)
     pool.query(query_team_no, [dct_tn.team, dct_tn.num])
     .then((res) => {
       var messages;
-      const message = arrangeText(res.rows[0].data);
-      messages = [
-        { 
-          type: 'image', 
-          originalContentUrl: res.rows[0].data.photo_url,
-          previewImageUrl: res.rows[0].data.photo_url
-        },
-        { 
-          type: 'text',
-          text: message
-        }
-      ];
 
-      return client.replyMessage(event.replyToken, messages);
+      if (rowCount > 0) {
+        const message = arrangeText(res.rows[0].data);
+        messages = [
+          { 
+            type: 'image', 
+            originalContentUrl: res.rows[0].data.photo_url,
+            previewImageUrl: res.rows[0].data.photo_url
+          },
+          { 
+            type: 'text',
+            text: message
+          }
+        ];
+      } else {
+        // 選手hitしなかった場合
+        messages = {
+          type: 'text',
+          text: "選手が見つかりませんでした。"
+        };
+      }
+    })
+    .catch(err => console.error('Error executing query', err.stack));
+
+  } else {
+    // メッセージは選手名検索である
+    // SQL-select (選手名検索)
+    pool.query(query_name, [event.message.text])
+    .then((res) => {
+      var messages;
+
+      if (res.rowCount > 1) {
+        // 複数選手hitした場合
+        messages = [];
+        const msg_length  = Math.ceil(res.rowCount / 10); // 選手数を10で割った商(切り上げ)を計算
+        const lastmsg_num = res.rowCount - Math.floor(res.rowCount / 10) * 10; // 選手数を10で割った余りを計算
+        var i_max;
+
+        if (msg_length <= 5) {
+          // 検索結果が50人以下なので、LINEで表示可能
+          // 選手数を10で割った商+1 分、messages配列にオブジェクトを作って格納する
+          for (let j=0; j<msg_length; j++) {
+            messages[j] = {
+              type: 'template',
+              altText: "複数選手検索結果",
+              template: {
+                type: 'carousel',
+                columns: []
+              }
+            };
+            if ((j == msg_length-1) && (lastmsg_num == 0)) {
+              // 現在が最後の10である
+              i_max = 10;
+            } else if (j == msg_length-1) {
+              // 現在が最後の1～9である
+              i_max = lastmsg_num;
+            } else {
+              // 現在が最後でない
+              i_max = 10;
+            };
+
+            for (let i=0; i<i_max; i++) {
+              messages[j].template.columns[i]       = {};
+              messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
+              messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
+              messages[j].template.columns[i].actions          = [{}];
+              messages[j].template.columns[i].actions[0].type  = "message";
+              messages[j].template.columns[i].actions[0].label = "この選手を検索";
+              messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
+              messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
+            }
+          };
+          //console.log(messages);
+        } else {
+          // 検索結果が50人より大きいので、LINEで表示不可。エラーを返す
+          messages = {type: 'text',
+                      text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
+        };
+      } else if (res.rowCount == 1) {
+        // 単一選手hitした場合
+        const message = arrangeText(res.rows[0].data);
+        messages = [
+          { 
+            type: 'image', 
+            originalContentUrl: res.rows[0].data.photo_url,
+            previewImageUrl: res.rows[0].data.photo_url
+          },
+          { 
+            type: 'text',
+            text: message
+          }
+        ];
+      } else {
+        // 選手hitしなかった場合
+        messages = {
+          type: 'text',
+          text: "選手が見つかりませんでした。"
+        };
+      }
     })
     .catch(err => console.error('Error executing query', err.stack));
   }
 
-  // SQL-select (選手名検索)
-  pool.query(query_name, [event.message.text])
-  .then((res) => {
-    var messages;
-
-    if (res.rowCount > 1) {
-      // 複数選手hitした場合
-      messages = [];
-      const msg_length  = Math.ceil(res.rowCount / 10); // 選手数を10で割った商(切り上げ)を計算
-      const lastmsg_num = res.rowCount - Math.floor(res.rowCount / 10) * 10; // 選手数を10で割った余りを計算
-      var i_max;
-
-      if (msg_length <= 5) {
-        // 検索結果が50人以下なので、LINEで表示可能
-        // 選手数を10で割った商+1 分、messages配列にオブジェクトを作って格納する
-        for (let j=0; j<msg_length; j++) {
-          messages[j] = {
-            type: 'template',
-            altText: "複数選手検索結果",
-            template: {
-              type: 'carousel',
-              columns: []
-            }
-          };
-          if ((j == msg_length-1) && (lastmsg_num == 0)) {
-            // 現在が最後の10である
-            i_max = 10;
-          } else if (j == msg_length-1) {
-            // 現在が最後の1～9である
-            i_max = lastmsg_num;
-          } else {
-            // 現在が最後でない
-            i_max = 10;
-          };
-
-          for (let i=0; i<i_max; i++) {
-            messages[j].template.columns[i]       = {};
-            messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
-            messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
-            messages[j].template.columns[i].actions          = [{}];
-            messages[j].template.columns[i].actions[0].type  = "message";
-            messages[j].template.columns[i].actions[0].label = "この選手を検索";
-            messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
-            messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
-          }
-        };
-        //console.log(messages);
-      } else {
-        // 検索結果が50人より大きいので、LINEで表示不可。エラーを返す
-        messages = {type: 'text',
-                    text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
-      };
-    } else if (res.rowCount == 1) {
-      // 単一選手hitした場合
-      const message = arrangeText(res.rows[0].data);
-      messages = [
-        { 
-          type: 'image', 
-          originalContentUrl: res.rows[0].data.photo_url,
-          previewImageUrl: res.rows[0].data.photo_url
-        },
-        { 
-          type: 'text',
-          text: message
-        }
-      ];
-    } else {
-      // 選手hitしなかった場合
-      messages = {
-        type: 'text',
-        text: "選手が見つかりませんでした。"
-      };
-    }
-
-    // use reply API
-    return client.replyMessage(event.replyToken, messages);
-  })
-  .catch(err => console.error('Error executing query', err.stack));
+  // use reply API
+  return client.replyMessage(event.replyToken, messages);
+}
 
   // old: 直接スクレイピングをしていたやり方
   //require('./scraping.js').getPlayerData(event.message.text).then( obj => {
@@ -211,9 +222,8 @@ function handleEvent(event) {
   //  }
   //  // use reply API
   //  return client.replyMessage(event.replyToken, messages);
-  //});
-  
-}
+  //}); 
+//}
 
 // listen on port
 const port = process.env.PORT || 3000;
