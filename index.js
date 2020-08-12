@@ -7,9 +7,8 @@ const pool     = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-const query_name    = `SELECT * FROM player WHERE data->>'name' LIKE '%' || $1 || '%' ;`;
+//const query_name    = `SELECT * FROM player WHERE data->>'name' LIKE '%' || $1 || '%' ;`;
 const query_team_no = `SELECT * FROM player WHERE data->>'team' = $1 AND data->>'no' = $2 ;`;
-//const query    = `SELECT * FROM player WHERE data->>'name' SIMILAR TO '%' || $1 || '%' ;`
 
 // create LINE SDK config from env variables
 const config = {
@@ -79,7 +78,8 @@ function handleEvent(event) {
   } else {
     // メッセージは選手名検索である
     // SQL-select (選手名検索)
-    pool.query(query_name, [event.message.text])
+    const query_name = require('./itaiji.js').getQuery(event.message.text); // 異体字を考慮してLIKE～ORしたクエリを生成
+    pool.query(query_name)
     .then((res) => {
       if (res.rowCount > 1) {
         // 複数選手hitした場合
