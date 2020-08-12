@@ -186,8 +186,9 @@ function createMsgObj(obj) {
             },
             {
               "type": "text",
-              "text": obj.kana,
+              "text": "(" + obj.kana + ")",
               "size": "md",
+              "margin": "md",
               "wrap": true,
               "color": "#aaaaaa",
               "gravity": "bottom"
@@ -197,7 +198,7 @@ function createMsgObj(obj) {
         {
           "type": "text",
           "text": obj.team + " #" + obj.no,
-          "size": "md",
+          "size": "sm",
           "margin": "sm"
         },
         {
@@ -234,7 +235,7 @@ function createMsgObj(obj) {
               "contents": [
                 {
                   "type": "text",
-                  "text": "STATS",
+                  "text": "2020",
                   "color": "#aaaaaa",
                   "size": "md",
                   "flex": 1
@@ -273,7 +274,7 @@ function createMsgObj(obj) {
           "type": "text",
           "text": obj.url,
           "wrap": true,
-          "color": "#0033cc",
+          "color": "#FFFFFF",
           "decoration": "underline"
         }
       ],
@@ -284,7 +285,12 @@ function createMsgObj(obj) {
         "uri": obj.url
       }
     },
-    "size": "giga"
+    "size": "giga",
+    "styles": {
+      "footer": {
+        "backgroundColor": "#464F69"
+      }
+    }
   };
   return {
     type: "flex",
