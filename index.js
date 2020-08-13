@@ -273,7 +273,7 @@ function createMsgObj(obj) {
           "type": "image",
           "url": obj.photo_url,
           "flex": 0,
-          "size": "xxs"
+          "size": "xs"
         },
         {
           "type": "text",
