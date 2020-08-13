@@ -167,6 +167,14 @@ function arrangeText(obj) {
 
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
+  const txt_stats = (obj.stats) ? 
+                    ((obj.position == "投手") ?
+                      ("試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
+                      "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip) :
+                      ("試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
+                      "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops)) :
+                    ("今シーズン未出場");
+
   const contents = {
     "type": "bubble",
     "body": {
@@ -199,7 +207,8 @@ function createMsgObj(obj) {
           "type": "text",
           "text": obj.team + " #" + obj.no,
           "size": "sm",
-          "margin": "sm"
+          "margin": "xs",
+          "color": "#aaaaaa"
         },
         {
           "type": "box",
@@ -242,13 +251,7 @@ function createMsgObj(obj) {
                 },
                 {
                   "type": "text",
-                  "text": (obj.stats) ? 
-                            ((obj.position == "投手") ?
-                              ("試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
-                              "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip) :
-                              ("試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
-                              "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops)) :
-                            ("今シーズン未出場"),
+                  "text": txt_stats,
                   "wrap": true,
                   "size": "md",
                   "flex": 5
@@ -256,8 +259,7 @@ function createMsgObj(obj) {
               ],
               "spacing": "sm"
             }
-          ],
-          "margin": "lg"
+          ]
         }
       ]
     },
@@ -277,7 +279,8 @@ function createMsgObj(obj) {
           "text": obj.url,
           "wrap": true,
           "color": "#FFFFFF",
-          "decoration": "underline"
+          "decoration": "underline",
+          "gravity": "center"
         }
       ],
       "flex": 0,
@@ -296,7 +299,7 @@ function createMsgObj(obj) {
   };
   return {
     type: "flex",
-    altText: obj.name,
+    altText: obj.name + "/" + txt_stats,
     contents: contents
   };
 
