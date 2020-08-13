@@ -214,6 +214,7 @@ function createMsgObj(obj) {
           "type": "box",
           "layout": "vertical",
           "spacing": "sm",
+          "margin": "md",
           "contents": [
             {
               "type": "box",
@@ -272,7 +273,7 @@ function createMsgObj(obj) {
           "type": "image",
           "url": obj.photo_url,
           "flex": 0,
-          "size": "xs"
+          "size": "xxs"
         },
         {
           "type": "text",
