@@ -87,40 +87,49 @@ exports.replyMessageByName = function (event, res) {
 }
 
 // LINE表示用にテキスト整形する関数
-function arrangeText(obj) {
-  var res;
-
-  res = obj.name + " (" + obj.kana + ")\n" +
-        obj.team + " #" + obj.no + "\n" + 
-        obj.position + "/" + obj.bt + "\n" +
-        obj.birthday + "生まれ (" + obj.age + "歳)\n" +
-        obj.career   + (obj.draft_y ? (" (" + obj.draft_y + ")") : "") + "\n" + 
-        "\n";
-  if (obj.stats) {
-    res = res + "<今シーズンの成績>\n"
-    if (obj.position == "投手") {
-      res = res + "試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
-                  "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip;
-    } else {
-      res = res + "試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
-                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops;
-    }
-  } else {
-    res = res + "<今シーズン未出場>"
-  }
-  return res;
-}
+//function arrangeText(obj) {
+//  var res;
+//
+//  res = obj.name + " (" + obj.kana + ")\n" +
+//        obj.team + " #" + obj.no + "\n" + 
+//        obj.position + "/" + obj.bt + "\n" +
+//        obj.birthday + "生まれ (" + obj.age + "歳)\n" +
+//        obj.career   + (obj.draft_y ? (" (" + obj.draft_y + ")") : "") + "\n" + 
+//        "\n";
+//  if (obj.stats) {
+//    res = res + "<今シーズンの成績>\n"
+//    if (obj.position == "投手") {
+//      res = res + "試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
+//                  "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip;
+//    } else {
+//      res = res + "試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
+//                  "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops;
+//    }
+//  } else {
+//    res = res + "<今シーズン未出場>"
+//  }
+//  return res;
+//}
 
 // -----------------
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  const txt_stats = (obj.stats) ? 
-                    ((obj.position == "投手") ?
-                      ("試" + obj.stats.game + "/勝" + obj.stats.win + "/敗" + obj.stats.lose + "/S" + obj.stats.save +
-                      "/回" + obj.stats.inning + "/防" + obj.stats.era + "/WHIP:" + obj.stats.whip) :
-                      ("試" + obj.stats.game + "/打" + obj.stats.ab + "/安" + obj.stats.h + "/率" + obj.stats.avg + "/出" + obj.stats.obp + 
-                      "/本" + obj.stats.hr + "/点" + obj.stats.rbi + "/盗" + obj.stats.sb + "/OPS:" + obj.stats.ops)) :
-                    ("今シーズン未出場");
+  const stats_thisyear     = obj.stats_2020;
+  const txt_stats_thisyear = (stats_thisyear) ? 
+                             ((obj.position == "投手") ?
+                               ("試" + stats_thisyear.game + "/勝" + stats_thisyear.win + "/敗" + stats_thisyear.lose + "/S" + stats_thisyear.save +
+                               "/回" + stats_thisyear.inning + "/防" + stats_thisyear.era + "/WHIP:" + stats_thisyear.whip) :
+                               ("試" + stats_thisyear.game + "/打" + stats_thisyear.ab + "/安" + stats_thisyear.h + "/率" + stats_thisyear.avg + "/出" + stats_thisyear.obp + 
+                               "/本" + stats_thisyear.hr + "/点" + stats_thisyear.rbi + "/盗" + stats_thisyear.sb + "/OPS:" + stats_thisyear.ops)) :
+                             ("今シーズン未出場");  
+  const stats_total        = obj.stats_total;
+  const txt_stats_total    = (stats_total) ? 
+                             ((obj.position == "投手") ?
+                               ("試" + stats_total.game + "/勝" + stats_total.win + "/敗" + stats_total.lose + "/S" + stats_total.save +
+                               "/回" + stats_total.inning + "/防" + stats_total.era + "/WHIP:" + stats_total.whip) :
+                               ("試" + stats_total.game + "/打" + stats_total.ab + "/安" + stats_total.h + "/率" + stats_total.avg + "/出" + stats_total.obp + 
+                               "/本" + stats_total.hr + "/点" + stats_total.rbi + "/盗" + stats_total.sb + "/OPS:" + stats_total.ops)) :
+                             ("公式戦未出場");
 
   const contents = {
     "type": "bubble",
@@ -199,7 +208,28 @@ function createMsgObj(obj) {
                 },
                 {
                   "type": "text",
-                  "text": txt_stats,
+                  "text": txt_stats_thisyear,
+                  "wrap": true,
+                  "size": "md",
+                  "flex": 5
+                }
+              ],
+              "spacing": "sm"
+            },
+            {
+              "type": "box",
+              "layout": "baseline",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "通算",
+                  "color": "#aaaaaa",
+                  "size": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": txt_stats_total,
                   "wrap": true,
                   "size": "md",
                   "flex": 5
@@ -251,15 +281,15 @@ function createMsgObj(obj) {
     contents: contents
   };
 
-  return [
-    { 
-      type: 'image', 
-      originalContentUrl: obj.photo_url,
-      previewImageUrl: obj.photo_url
-    },
-    { 
-      type: 'text',
-      text: arrangeText(obj)
-    }
-  ];
+  //return [
+  //  { 
+  //    type: 'image', 
+  //    originalContentUrl: obj.photo_url,
+  //    previewImageUrl: obj.photo_url
+  //  },
+  //  { 
+  //    type: 'text',
+  //    text: arrangeText(obj)
+  //  }
+  //];
 }

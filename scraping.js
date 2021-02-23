@@ -40,6 +40,7 @@ function getPlayerDataByName(q) {
 
         //url_player = $('a.player_unit_1', '#pl_result_list').attr('href');
         //console.log(url_player);
+        //console.log(res_search);
         if (res_search.length == 1) {
           // 一人だけ検索ヒットした場合、その選手のデータ取得
           getPlayerDataByUrl(res_search[0].url_p).then(player_info => {
@@ -107,51 +108,12 @@ function getPlayerDataByUrl(url_p) {
       result.career    = bio.find('tr').eq(4).find('td').text();
       result.draft_y   = bio.find('tr').eq(5).find('td').text();
     
-      // 2020年度の成績を取得
-      var stats_2020 = $('div#pc_stats_wrapper td.year:contains("2020")').parent();
-    
-      if (stats_2020[0]) { // 今年度出場しているか
-        result.stats = {};
-        if (result.position == "投手") {
-          result.stats.game   = stats_2020.find('td').eq(2).text();
-          result.stats.win    = stats_2020.find('td').eq(3).text();
-          result.stats.lose   = stats_2020.find('td').eq(4).text();
-          result.stats.save   = stats_2020.find('td').eq(5).text();
-          result.stats.inning = stats_2020.find('td').eq(13).text().replace(/\s+/g, ""); // 投球回のスペース除去
-          result.stats.h      = stats_2020.find('td').eq(15).text();
-          result.stats.bb     = stats_2020.find('td').eq(17).text();
-          result.stats.era    = stats_2020.find('td').eq(24).text();
-          // WHIP計算
-          var ing_int  = Number(String(result.stats.inning).split(".")[0]); //投球回の整数部分を得る
-          var ing_frac = Number(String(result.stats.inning).split(".")[1]); //投球回の小数部分を得る
-          var h_p_bb   = parseInt(result.stats.h)+parseInt(result.stats.bb); //安打数＋四球
-          if (ing_frac == 2) {
-            // 投球回小数部:2/3 
-            result.stats.whip = Math.round((h_p_bb/(ing_int+2/3))* 100 ) / 100;
-          } else if (ing_frac == 1) {
-            // 投球回小数部:1/3
-            result.stats.whip = Math.round((h_p_bb/(ing_int+1/3))* 100 ) / 100;
-          } else {
-            // 投球回小数部なし
-            result.stats.whip = Math.round((h_p_bb/ ing_int     )* 100 ) / 100;
-          }
-        } else {
-          result.stats.game = stats_2020.find('td').eq(2).text();
-          result.stats.ab   = stats_2020.find('td').eq(4).text();
-          result.stats.h    = stats_2020.find('td').eq(6).text();
-          result.stats.hr   = stats_2020.find('td').eq(9).text();
-          result.stats.rbi  = stats_2020.find('td').eq(11).text();
-          result.stats.sb   = stats_2020.find('td').eq(12).text();
-          result.stats.avg  = stats_2020.find('td').eq(20).text();
-          result.stats.slg  = stats_2020.find('td').eq(21).text();
-          result.stats.obp  = stats_2020.find('td').eq(22).text();
-          // OPS計算
-          result.stats.ops  = Math.round((parseFloat(result.stats.slg) + parseFloat(result.stats.obp)) * 1000) / 1000;
-        }
-      } else {
-        // 今シーズンの出場がない場合、stats propertyはnull
-      }
-    
+      // 成績取得
+      const stats_2020 = getStatsByYear($, result.position, "2020");
+      if (stats_2020) result.stats_2020 = stats_2020;
+      const stats_total = getStatsTotal($, result.position); // 空欄が通算を意味する
+      if (stats_total) result.stats_total = stats_total; 
+      
       // スペース除去
       for (let key in result) {
         // オブジェクトの第2階層目があるかどうか
@@ -175,3 +137,101 @@ function getPlayerDataByUrl(url_p) {
     }
   });
 };
+
+function getStatsByYear($, position, year) {
+  // 指定年度の成績を取得
+  var elm_stats = $('div#pc_stats_wrapper td.year:contains("'+year+'")').parent();
+    
+  if (elm_stats[0]) { // 今年度出場しているか
+    var stats = {};
+    if (position == "投手") {
+      stats.game   = elm_stats.find('td').eq(2).text();
+      stats.win    = elm_stats.find('td').eq(3).text();
+      stats.lose   = elm_stats.find('td').eq(4).text();
+      stats.save   = elm_stats.find('td').eq(5).text();
+      stats.inning = elm_stats.find('td').eq(13).text().replace(/\s+/g, ""); // 投球回のスペース除去
+      stats.h      = elm_stats.find('td').eq(15).text();
+      stats.bb     = elm_stats.find('td').eq(17).text();
+      stats.era    = elm_stats.find('td').eq(24).text();
+      // WHIP計算
+      var ing_int  = Number(String(stats.inning).split(".")[0]); //投球回の整数部分を得る
+      var ing_frac = Number(String(stats.inning).split(".")[1]); //投球回の小数部分を得る
+      var h_p_bb   = parseInt(stats.h)+parseInt(stats.bb); //安打数＋四球
+      if (ing_frac == 2) {
+        // 投球回小数部:2/3 
+        stats.whip = Math.round((h_p_bb/(ing_int+2/3))* 100 ) / 100;
+      } else if (ing_frac == 1) {
+        // 投球回小数部:1/3
+        stats.whip = Math.round((h_p_bb/(ing_int+1/3))* 100 ) / 100;
+      } else {
+        // 投球回小数部なし
+        stats.whip = Math.round((h_p_bb/ ing_int     )* 100 ) / 100;
+      }
+    } else {
+      stats.game = elm_stats.find('td').eq(2).text();
+      stats.ab   = elm_stats.find('td').eq(4).text();
+      stats.h    = elm_stats.find('td').eq(6).text();
+      stats.hr   = elm_stats.find('td').eq(9).text();
+      stats.rbi  = elm_stats.find('td').eq(11).text();
+      stats.sb   = elm_stats.find('td').eq(12).text();
+      stats.avg  = elm_stats.find('td').eq(20).text();
+      stats.slg  = elm_stats.find('td').eq(21).text();
+      stats.obp  = elm_stats.find('td').eq(22).text();
+      // OPS計算
+      stats.ops  = Math.round((parseFloat(stats.slg) + parseFloat(stats.obp)) * 1000) / 1000;
+    }
+  } else {
+    // 今シーズンの出場がない場合、stats propertyはnull
+  }
+
+  return stats;
+}
+
+function getStatsTotal($, position) {
+  // 指定年度の成績を取得
+  var elm_stats = $('div#pc_stats_wrapper th.team:contains("通　算")').parent();
+    
+  if (elm_stats[0]) { // 今年度出場しているか
+    var stats = {};
+    if (position == "投手") {
+      stats.game   = elm_stats.find('th').eq(2).text();
+      stats.win    = elm_stats.find('th').eq(3).text();
+      stats.lose   = elm_stats.find('th').eq(4).text();
+      stats.save   = elm_stats.find('th').eq(5).text();
+      stats.inning = elm_stats.find('th').eq(13).text().replace(/\s+/g, ""); // 投球回のスペース除去
+      stats.h      = elm_stats.find('th').eq(15).text();
+      stats.bb     = elm_stats.find('th').eq(17).text();
+      stats.era    = elm_stats.find('th').eq(24).text();
+      // WHIP計算
+      var ing_int  = Number(String(stats.inning).split(".")[0]); //投球回の整数部分を得る
+      var ing_frac = Number(String(stats.inning).split(".")[1]); //投球回の小数部分を得る
+      var h_p_bb   = parseInt(stats.h)+parseInt(stats.bb); //安打数＋四球
+      if (ing_frac == 2) {
+        // 投球回小数部:2/3 
+        stats.whip = Math.round((h_p_bb/(ing_int+2/3))* 100 ) / 100;
+      } else if (ing_frac == 1) {
+        // 投球回小数部:1/3
+        stats.whip = Math.round((h_p_bb/(ing_int+1/3))* 100 ) / 100;
+      } else {
+        // 投球回小数部なし
+        stats.whip = Math.round((h_p_bb/ ing_int     )* 100 ) / 100;
+      }
+    } else {
+      stats.game = elm_stats.find('th').eq(2).text();
+      stats.ab   = elm_stats.find('th').eq(4).text();
+      stats.h    = elm_stats.find('th').eq(6).text();
+      stats.hr   = elm_stats.find('th').eq(9).text();
+      stats.rbi  = elm_stats.find('th').eq(11).text();
+      stats.sb   = elm_stats.find('th').eq(12).text();
+      stats.avg  = elm_stats.find('th').eq(20).text();
+      stats.slg  = elm_stats.find('th').eq(21).text();
+      stats.obp  = elm_stats.find('th').eq(22).text();
+      // OPS計算
+      stats.ops  = Math.round((parseFloat(stats.slg) + parseFloat(stats.obp)) * 1000) / 1000;
+    }
+  } else {
+    // 今シーズンの出場がない場合、stats propertyはnull
+  }
+
+  return stats;
+}
