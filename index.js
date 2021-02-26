@@ -36,7 +36,13 @@ app.get('/json', (req, res) => {
   const query_name = require('./itaiji.js').getQuery(escapeSQL(req.query.name));
   pool.query(query_name)
   .then((res_pg) => {
-    res.status(200).send(res_pg.rows[0].data);
+    if (res_pg.rowCount == 1) {
+      res.status(200).send(res_pg.rows[0].data);
+    } else if (res_pg.rowCount == 0) {
+      res.status(500).send("error: hit no players.");
+    } else {
+      res.status(500).send("error: hit multiple players.");
+    }
   }).catch(err => {
     console.error('Error executing query', err.stack);
     res.status(400).send();
