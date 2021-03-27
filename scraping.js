@@ -109,6 +109,8 @@ function getPlayerDataByUrl(url_p) {
       result.draft_y   = bio.find('tr').eq(5).find('td').text();
     
       // 成績取得
+      const stats_2021 = getStatsByYear($, result.position, "2021");
+      if (stats_2021) result.stats_2021 = stats_2021;
       const stats_2020 = getStatsByYear($, result.position, "2020");
       if (stats_2020) result.stats_2020 = stats_2020;
       const stats_total = getStatsTotal($, result.position); // 空欄が通算を意味する

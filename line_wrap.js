@@ -114,7 +114,8 @@ exports.replyMessageByName = function (event, res) {
 // -----------------
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  const stats_thisyear     = obj.stats_2020;
+  const stats_thisyear     = obj.stats_2021;
+  //const stats_thisyear     = obj.stats_2020;
   const txt_stats_thisyear = (stats_thisyear) ? 
                              ((obj.position == "投手") ?
                                ("試" + stats_thisyear.game + "/勝" + stats_thisyear.win + "/敗" + stats_thisyear.lose + "/S" + stats_thisyear.save +
