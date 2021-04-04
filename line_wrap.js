@@ -114,23 +114,9 @@ exports.replyMessageByName = function (event, res) {
 // -----------------
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  const stats_thisyear     = obj.stats_2021;
-  //const stats_thisyear     = obj.stats_2020;
-  const txt_stats_thisyear = (stats_thisyear) ? 
-                             ((obj.position == "投手") ?
-                               ("試" + stats_thisyear.game + "/勝" + stats_thisyear.win + "/敗" + stats_thisyear.lose + "/S" + stats_thisyear.save +
-                               "/回" + stats_thisyear.inning + "/防" + stats_thisyear.era + "/WHIP:" + stats_thisyear.whip) :
-                               ("試" + stats_thisyear.game + "/打" + stats_thisyear.ab + "/安" + stats_thisyear.h + "/率" + stats_thisyear.avg + "/出" + stats_thisyear.obp + 
-                               "/本" + stats_thisyear.hr + "/点" + stats_thisyear.rbi + "/盗" + stats_thisyear.sb + "/OPS:" + stats_thisyear.ops)) :
-                             ("今シーズン未出場");  
-  const stats_total        = obj.stats_total;
-  const txt_stats_total    = (stats_total) ? 
-                             ((obj.position == "投手") ?
-                               ("試" + stats_total.game + "/勝" + stats_total.win + "/敗" + stats_total.lose + "/S" + stats_total.save +
-                               "/回" + stats_total.inning + "/防" + stats_total.era + "/WHIP:" + stats_total.whip) :
-                               ("試" + stats_total.game + "/打" + stats_total.ab + "/安" + stats_total.h + "/率" + stats_total.avg + "/出" + stats_total.obp + 
-                               "/本" + stats_total.hr + "/点" + stats_total.rbi + "/盗" + stats_total.sb + "/OPS:" + stats_total.ops)) :
-                             ("公式戦未出場");
+  const txt_stats_thisyear = generateTextFromStats(obj.stats_2021);
+  const txt_stats_lastyear = generateTextFromStats(obj.stats_2020);
+  const txt_stats_total    = generateTextFromStats(obj.stats_total);
 
   const contents = {
     "type": "bubble",
@@ -223,6 +209,27 @@ function createMsgObj(obj) {
               "contents": [
                 {
                   "type": "text",
+                  "text": "2020",
+                  "color": "#aaaaaa",
+                  "size": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": txt_stats_lastyear,
+                  "wrap": true,
+                  "size": "md",
+                  "flex": 5
+                }
+              ],
+              "spacing": "sm"
+            },
+            {
+              "type": "box",
+              "layout": "baseline",
+              "contents": [
+                {
+                  "type": "text",
                   "text": "通算",
                   "color": "#aaaaaa",
                   "size": "md",
@@ -293,4 +300,14 @@ function createMsgObj(obj) {
   //    text: arrangeText(obj)
   //  }
   //];
+}
+
+function generateTextFromStats (stats) {
+  return stats_year = (stats) ? 
+                      ((stats.position == "投手") ?
+                        ("試" + stats.game + "/勝" + stats.win + "/敗" + stats.lose + "/S" + stats.save +
+                        "/回" + stats.inning + "/防" + stats.era + "/WHIP:" + stats.whip) :
+                        ("試" + stats.game + "/打" + stats.ab + "/安" + stats.h + "/率" + stats.avg + "/出" + stats.obp + 
+                        "/本" + stats.hr + "/点" + stats.rbi + "/盗" + stats.sb + "/OPS:" + stats.ops)) :
+                      ("今シーズン未出場");  
 }
