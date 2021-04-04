@@ -114,9 +114,9 @@ exports.replyMessageByName = function (event, res) {
 // -----------------
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  const txt_stats_thisyear = generateTextFromStats(obj.stats_2021);
-  const txt_stats_lastyear = generateTextFromStats(obj.stats_2020);
-  const txt_stats_total    = generateTextFromStats(obj.stats_total);
+  const txt_stats_thisyear = generateTextFromStats(obj.position, obj.stats_2021);
+  const txt_stats_lastyear = generateTextFromStats(obj.position, obj.stats_2020);
+  const txt_stats_total    = generateTextFromStats(obj.position, obj.stats_total);
 
   const contents = {
     "type": "bubble",
@@ -302,12 +302,12 @@ function createMsgObj(obj) {
   //];
 }
 
-function generateTextFromStats (stats) {
+function generateTextFromStats (position, stats) {
   return stats_year = (stats) ? 
-                      ((stats.position == "投手") ?
+                      ((position == "投手") ?
                         ("試" + stats.game + "/勝" + stats.win + "/敗" + stats.lose + "/S" + stats.save +
                         "/回" + stats.inning + "/防" + stats.era + "/WHIP:" + stats.whip) :
                         ("試" + stats.game + "/打" + stats.ab + "/安" + stats.h + "/率" + stats.avg + "/出" + stats.obp + 
                         "/本" + stats.hr + "/点" + stats.rbi + "/盗" + stats.sb + "/OPS:" + stats.ops)) :
-                      ("今シーズン未出場");  
+                      ("シーズン未出場");  
 }
