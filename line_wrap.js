@@ -7,7 +7,7 @@ const config = {
 // create LINE SDK client
 const client = new line.Client(config);
 
-exports.replyMessageByNumber = function (event, res) {
+exports.replyMessageByNumber = function (event, res, dct_tn) {
   if (res.rowCount > 0) {
     messages = createMsgObj(res.rows[0].data);
   } else {

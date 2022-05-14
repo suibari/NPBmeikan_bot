@@ -70,7 +70,7 @@ function handleEvent(event) {
     // SQL-selet (チーム名&背番号検索)
     pool.query(query_team_no, [dct_tn.team, dct_tn.num])
     .then((res) => {
-      line_wrap.replyMessageByNumber(event, res);
+      line_wrap.replyMessageByNumber(event, res, dct_tn);
     })
     .catch(err => console.error('Error executing query', err.stack));
 
