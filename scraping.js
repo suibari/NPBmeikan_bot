@@ -109,6 +109,8 @@ function getPlayerDataByUrl(url_p) {
       result.draft_y   = bio.find('tr').eq(5).find('td').text();
     
       // 成績取得
+      const stats_2022 = getStatsByYear($, result.position, "2022");
+      if (stats_2022) result.stats_2022 = stats_2022;
       const stats_2021 = getStatsByYear($, result.position, "2021");
       if (stats_2021) result.stats_2021 = stats_2021;
       const stats_2020 = getStatsByYear($, result.position, "2020");

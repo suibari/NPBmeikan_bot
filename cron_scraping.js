@@ -26,12 +26,21 @@ const url_teams =  ["https://npb.jp/bis/teams/rst_g.html",
                     "https://npb.jp/bis/teams/rst_b.html"];
 var url_players = [];
 
-// SQLクエリ(あればUPDATE, なければINSERT)
+// SQLクエリ(UPDATE)
 const query = `INSERT INTO player (url, data, updated_at)
                VALUES ($1, $2, current_timestamp)
-               ON CONFLICT(url)
-               DO UPDATE SET data = $2, updated_at = current_timestamp;
               `;
+// あればUPDATE, なければINSERT
+//const query = `INSERT INTO player (url, data, updated_at)
+//               VALUES ($1, $2, current_timestamp)
+//               ON CONFLICT(url)
+//               DO UPDATE SET data = $2, updated_at = current_timestamp;
+//              `;
+
+// テーブル全削除
+pool.query("DELETE FROM player")
+.then(console.log("seccessful DELETE DB"))
+.catch(err => console.error('Error executing query', err.stack));
 
 // 選手一覧ページの全選手に対してgetPlayerDataByUrl関数を実行して、結果をDBに格納する
 url_teams.forEach((url_team, j) => {
@@ -78,5 +87,5 @@ url_teams.forEach((url_team, j) => {
         console.error(e);
       }
     })
-  }, j * 100 * 1000)
+  }, j * 150 * 1000)
 });

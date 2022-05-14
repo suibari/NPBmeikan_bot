@@ -114,8 +114,8 @@ exports.replyMessageByName = function (event, res) {
 // -----------------
 // 選手情報JSONからメッセージオブジェクト作成する関数
 function createMsgObj(obj) {
-  const txt_stats_thisyear = generateTextFromStats(obj.position, obj.stats_2021);
-  const txt_stats_lastyear = generateTextFromStats(obj.position, obj.stats_2020);
+  const txt_stats_thisyear = generateTextFromStats(obj.position, obj.stats_2022);
+  const txt_stats_lastyear = generateTextFromStats(obj.position, obj.stats_2021);
   const txt_stats_total    = generateTextFromStats(obj.position, obj.stats_total);
 
   const contents = {
@@ -188,7 +188,7 @@ function createMsgObj(obj) {
               "contents": [
                 {
                   "type": "text",
-                  "text": "2021",
+                  "text": "2022",
                   "color": "#aaaaaa",
                   "size": "md",
                   "flex": 1
@@ -209,7 +209,7 @@ function createMsgObj(obj) {
               "contents": [
                 {
                   "type": "text",
-                  "text": "2020",
+                  "text": "2021",
                   "color": "#aaaaaa",
                   "size": "md",
                   "flex": 1
