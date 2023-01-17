@@ -5,7 +5,7 @@ const itaiji = require('./itaiji.js');
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery({
   projectId: 'npbmeikan-bot',
-  keyFilename: './key/key.json'
+  keyFilename: './.key.json'
 });
 
 exports.createMessage = function (text) {
