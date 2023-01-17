@@ -57,6 +57,8 @@ async function handleEvent(event) {
     return Promise.resolve(null);
   }
   
-  const messages = router.createMessage(event.message.text);
-  client.replyMessage(event.replyToken, messages);
+  router.createMessage(event.message.text)
+  .then(messages => {
+    client.replyMessage(event.replyToken, messages);
+  });
 }

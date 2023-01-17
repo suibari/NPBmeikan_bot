@@ -9,43 +9,44 @@ const bigquery = new BigQuery({
 });
 
 exports.createMessage = function (text) {
-//function createMessage (text) {
+  return new Promise (resolve => {
   
-  const query_team_no = `SELECT * FROM npb_players.player WHERE team = @team AND number = @number ;`;
-  
-  // チーム名、背番号が含まれるか判定
-  const dct_tn = detectTeamAndNum(text);
-  
-  if ((dct_tn.team) && (dct_tn.num)) {
-    // メッセージにチーム名および背番号が含まれている
-    // SQL-selet (チーム名&背番号検索)
-    //pool.query(query_team_no, [dct_tn.team, dct_tn.num])
-    //redis.hget()
-    const params = {
-      team: dct_tn.team,
-      number: dct_tn.num
-    };
-    bigquery.query({query: query_team_no, params: params})
-    .then((res) => {
-      const message = line_wrap.createMessageByNumber(res[0], dct_tn);
-      console.log(message);
-      return message;
-    })
-    .catch(err => console.error('Error executing query', err.stack));
+    const query_team_no = `SELECT * FROM npb_players.player WHERE team = @team AND number = @number ;`;
+    
+    // チーム名、背番号が含まれるか判定
+    const dct_tn = detectTeamAndNum(text);
+    
+    if ((dct_tn.team) && (dct_tn.num)) {
+      // メッセージにチーム名および背番号が含まれている
+      // SQL-selet (チーム名&背番号検索)
+      //pool.query(query_team_no, [dct_tn.team, dct_tn.num])
+      //redis.hget()
+      const params = {
+        team: dct_tn.team,
+        number: dct_tn.num
+      };
+      bigquery.query({query: query_team_no, params: params})
+      .then((res) => {
+        const message = line_wrap.createMessageByNumber(res[0], dct_tn);
+        console.log(message);
+        resolve(message);
+      })
+      .catch(err => console.error('Error executing query', err.stack));
 
-  } else {
-    // メッセージは選手名検索である
-    // SQL-select (選手名検索)
-    const query_name = itaiji.getQuery(escapeSQL(text)); // メタエスケープ＆異体字を考慮してLIKE～ORしたクエリを生成
-    //pool.query(query_name)
-    bigquery.query(query_name)
-    .then((res) => {
-      const message = line_wrap.createMessageByName(res[0]);
-      console.log(message);
-      return message;
-    })
-    .catch(err => console.error('Error executing query', err.stack));
-  };
+    } else {
+      // メッセージは選手名検索である
+      // SQL-select (選手名検索)
+      const query_name = itaiji.getQuery(escapeSQL(text)); // メタエスケープ＆異体字を考慮してLIKE～ORしたクエリを生成
+      //pool.query(query_name)
+      bigquery.query(query_name)
+      .then((res) => {
+        const message = line_wrap.createMessageByName(res[0]);
+        console.log(message);
+        resolve(message);
+      })
+      .catch(err => console.error('Error executing query', err.stack));
+    };
+  })
 };
 
 // テキストにチーム名、背番号が含まれるか判定する関数
