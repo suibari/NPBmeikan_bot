@@ -29,7 +29,7 @@ exports.createMessage = function (text) {
       .then((res) => {
         const message = line_wrap.createMessageByNumber(res[0], dct_tn);
         console.log(message);
-        resolve(message);
+        return resolve(message);
       })
       .catch(err => console.error('Error executing query', err.stack));
 
@@ -42,7 +42,7 @@ exports.createMessage = function (text) {
       .then((res) => {
         const message = line_wrap.createMessageByName(res[0]);
         console.log(message);
-        resolve(message);
+        return resolve(message);
       })
       .catch(err => console.error('Error executing query', err.stack));
     };
