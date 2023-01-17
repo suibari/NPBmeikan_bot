@@ -55,7 +55,8 @@ exports.createMessageByName = function (res) {
         };
 
         for (let i=0; i<i_max; i++) {
-          var obj = res[j*10+i].data;
+          var obj = JSON.parse(res[j*10+i].data);
+          console.log(obj);
           messages[j].template.columns[i]       = {};
           messages[j].template.columns[i].title = obj.name;
           messages[j].template.columns[i].text  = obj.team;
