@@ -1,15 +1,16 @@
 const line     = require('@line/bot-sdk');
-const config = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.CHANNEL_SECRET
-};
+//const config = {
+//  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+//  channelSecret: process.env.CHANNEL_SECRET
+//};
 
 // create LINE SDK client
-const client = new line.Client(config);
+//const client = new line.Client(config);
 
-exports.replyMessageByNumber = function (event, res, dct_tn) {
-  if (res.rowCount > 0) {
-    messages = createMsgObj(res.rows[0].data);
+exports.createMessageByNumber = function (res, dct_tn) {
+  if (res.length > 0) {
+    const obj = JSON.parse(res[0].data);
+    messages = createMsgObj(obj);
   } else {
     // 選手hitしなかった場合
     messages = {
@@ -17,16 +18,17 @@ exports.replyMessageByNumber = function (event, res, dct_tn) {
       text: dct_tn.team + "の背番号" + dct_tn.num + "はいませんでした。"
     };
   }
-  // use reply API
-  return client.replyMessage(event.replyToken, messages);
+  return messages;
 };
 
-exports.replyMessageByName = function (event, res) {
-  if (res.rowCount > 1) {
+exports.createMessageByName = function (res) {
+  const res_length = res.length;
+
+  if (res_length > 1) {
     // 複数選手hitした場合
     messages = [];
-    const msg_length  = Math.ceil(res.rowCount / 10); // 選手数を10で割った商(切り上げ)を計算
-    const lastmsg_num = res.rowCount - Math.floor(res.rowCount / 10) * 10; // 選手数を10で割った余りを計算
+    const msg_length  = Math.ceil(res_length / 10); // 選手数を10で割った商(切り上げ)を計算
+    const lastmsg_num = res_length - Math.floor(res_length / 10) * 10; // 選手数を10で割った余りを計算
     var i_max;
 
     if (msg_length <= 5) {
@@ -53,13 +55,14 @@ exports.replyMessageByName = function (event, res) {
         };
 
         for (let i=0; i<i_max; i++) {
+          var obj = res[j*10+i].data;
           messages[j].template.columns[i]       = {};
-          messages[j].template.columns[i].title = res.rows[j*10+i].data.name;
-          messages[j].template.columns[i].text  = res.rows[j*10+i].data.team;
+          messages[j].template.columns[i].title = obj.name;
+          messages[j].template.columns[i].text  = obj.team;
           messages[j].template.columns[i].actions          = [{}];
           messages[j].template.columns[i].actions[0].type  = "message";
           messages[j].template.columns[i].actions[0].label = "この選手を検索";
-          messages[j].template.columns[i].actions[0].text  = res.rows[j*10+i].data.name;
+          messages[j].template.columns[i].actions[0].text  = obj.name;
           messages[j].template.columns[i].defaultAction    = messages[j].template.columns[i].actions[0];
         }
       };
@@ -70,9 +73,10 @@ exports.replyMessageByName = function (event, res) {
                   text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
     };
 
-  } else if (res.rowCount == 1) {
+  } else if (res_length == 1) {
     // 単一選手hitした場合
-    messages = createMsgObj(res.rows[0].data);
+    const obj = JSON.parse(res[0].data);
+    messages = createMsgObj(obj);
 
   } else {
     // 選手hitしなかった場合
@@ -83,7 +87,7 @@ exports.replyMessageByName = function (event, res) {
   }
 
   // use reply API
-  return client.replyMessage(event.replyToken, messages);
+  return messages;
 }
 
 // LINE表示用にテキスト整形する関数
