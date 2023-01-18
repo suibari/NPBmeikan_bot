@@ -310,12 +310,16 @@ function createMsgNewsObj (news) {
   const displayedNews = 3;
 
   const obj = {
-    "type": "carousel",
-    "contents": []
+    "type": "flex",
+    "altText": "選手ニュース",
+    "contents": {
+      "type": "carousel",
+      "contents": []
+    }
   };
   for (let i=0; i<displayedNews; i++) {
     const contents = createContents(news.title[i], news.src[i], news.img[i], news.link[i]);
-    obj.contents.push(contents);
+    obj.contents.contents.push(contents);
   };
   return obj;
 
