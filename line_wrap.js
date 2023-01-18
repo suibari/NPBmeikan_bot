@@ -1,16 +1,12 @@
-const line     = require('@line/bot-sdk');
-//const config = {
-//  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-//  channelSecret: process.env.CHANNEL_SECRET
-//};
+const scraping = require('./scraping.js');
 
-// create LINE SDK client
-//const client = new line.Client(config);
-
-exports.createMessageByNumber = function (res, dct_tn) {
+exports.createMessageByNumber = async function (res, dct_tn) {
   if (res.length > 0) {
     const obj = JSON.parse(res[0].data);
-    messages = createMsgObj(obj);
+    const news = await scraping.getNews(obj.name);
+    const messages_main = createMsgObj(obj);
+    const messages_news = createMsgNewsObj(news);
+    messages = [messages_main, messages_news];
   } else {
     // 選手hitしなかった場合
     messages = {
@@ -21,7 +17,7 @@ exports.createMessageByNumber = function (res, dct_tn) {
   return messages;
 };
 
-exports.createMessageByName = function (res) {
+exports.createMessageByName = async function (res) {
   const res_length = res.length;
 
   if (res_length > 1) {
@@ -77,7 +73,10 @@ exports.createMessageByName = function (res) {
   } else if (res_length == 1) {
     // 単一選手hitした場合
     const obj = JSON.parse(res[0].data);
-    messages = createMsgObj(obj);
+    const news = await scraping.getNews(obj.name);
+    const messages_main = createMsgObj(obj);
+    const messages_news = createMsgNewsObj(news);
+    messages = [messages_main, messages_news];
 
   } else {
     // 選手hitしなかった場合
@@ -305,6 +304,60 @@ function createMsgObj(obj) {
   //    text: arrangeText(obj)
   //  }
   //];
+}
+
+function createMsgNewsObj (news) {
+  const displayedNews = 3;
+
+  const obj = {
+    "type": "carousel",
+    "contents": []
+  };
+  for (let i=0; i<displayedNews; i++) {
+    const contents = createContents(news.title[i], news.src[i], news.img[i], news.link[i]);
+    obj.contents.push(contents);
+  };
+  return obj;
+
+  function createContents (title, src, img, link) {
+    return {
+      "type": "bubble",
+      "size": "micro",
+      "hero": {
+        "type": "image",
+        "url": img,
+        "size": "full",
+        "aspectMode": "cover",
+        "aspectRatio": "320:213"
+      },
+      "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": title,
+            "weight": "bold",
+            "size": "sm",
+            "wrap": true
+          },
+          {
+            "type": "text",
+            "text": src,
+            "size": "xxs",
+            "wrap": true
+          }
+        ],
+        "spacing": "sm",
+        "paddingAll": "lg"
+      },
+      "action": {
+        "type": "uri",
+        "label": "action",
+        "uri": link
+      }
+    }
+  }
 }
 
 function generateTextFromStats (position, stats) {

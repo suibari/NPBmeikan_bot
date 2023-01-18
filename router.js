@@ -1,7 +1,6 @@
 const line_wrap = require('./line_wrap.js');
 const itaiji = require('./itaiji.js');
 
-//const redis = new Redis("rediss://red-cf0ln8cgqg45vete6ej0:rXw9XsVXAPoude6qsriJlyNrQBL76cgI@singapore-redis.render.com:6379");
 const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery({
   projectId: 'npbmeikan-bot',
