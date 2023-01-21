@@ -307,9 +307,10 @@ function createMsgObj(obj) {
 }
 
 function createMsgNewsObj (news) {
-  const displayedNews = 3;
+  const displayedNewsMAX = 3;
+  var displayedNews;
 
-  const obj = {
+  var message = {
     "type": "flex",
     "altText": "選手ニュース",
     "contents": {
@@ -317,11 +318,27 @@ function createMsgNewsObj (news) {
       "contents": []
     }
   };
-  for (let i=0; i<displayedNews; i++) {
-    const contents = createContents(news.title[i], news.src[i], news.img[i], news.link[i]);
-    obj.contents.contents.push(contents);
-  };
-  return obj;
+  
+  // ニュース件数がdisplayedNews以下か
+  if (news.title.length >= displayedNewsMAX) {
+    displayedNews = displayedNewsMAX;
+  } else {
+    displayedNews = news.title.length;
+  }
+
+  if (displayedNews > 0) {
+    for (let i=0; i<displayedNews; i++) {
+      const contents = createContents(news.title[i], news.src[i], news.img[i], news.link[i]);
+      message.contents.contents.push(contents);
+    };
+    return message;
+  } else {
+    message = {
+      type: 'text',
+      text: "ニュースは見つかりませんでした。"
+    };
+    return message;
+  }
 
   function createContents (title, src, img, link) {
     return {
