@@ -43,6 +43,10 @@ app.get('/json', (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.status(500).send("ping ok!");
+});
+
 // listen on port
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
