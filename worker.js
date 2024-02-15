@@ -54,7 +54,7 @@ db.serialize(async() => {
 exports.createMessage = function (text) {
   return new Promise (resolve => {
   
-    const query_team_no = `SELECT * FROM player WHERE team = ? AND number = ? ;`;
+    const query_team_no = `SELECT * FROM player WHERE data->'$.team' = ? AND data->'$.number' = ? ;`;
     
     // チーム名、背番号が含まれるか判定
     const dct_tn = detectTeamAndNum(text);
