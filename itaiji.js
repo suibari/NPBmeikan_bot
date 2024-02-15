@@ -3,9 +3,9 @@ exports.getQuery = function (text) {
   var res;
   
   var arr = variation(text);
-  res =  "SELECT * FROM npb_players.player WHERE name LIKE '%' || '" + arr[0] + "' || '%'";
+  res =  "SELECT * FROM player WHERE data->'$.name' LIKE '%' || '" + arr[0] + "' || '%'";
   for (let i=1; i<arr.length; i++) {
-    res = res + " OR name LIKE '%' || '" + arr[i] + "' || '%'";
+    res = res + " OR data->'$.name' LIKE '%' || '" + arr[i] + "' || '%'";
   }
   return res + " ;";
 }

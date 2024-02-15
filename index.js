@@ -1,13 +1,15 @@
 'use strict';
 
-const express  = require('express');
-const line      = require('@line/bot-sdk');
+const express = require('express');
+const line   = require('@line/bot-sdk');
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.CHANNEL_SECRET
 };
 const client = new line.Client(config);
-const router    = require('./router.js')
+const cron = require('node-cron');
+const {Worker} = require('worker_threads');
+const worker = require('./worker.js');
 
 // create Express app
 // about Express itself: https://expressjs.com/
@@ -25,22 +27,19 @@ app.post('/callback', line.middleware(config), (req, res) => {
 });
 
 // 生データを返す
-app.get('/json', (req, res) => {
+app.get('/json', async (req, res) => {
   res.header('Content-Type', 'application/json', 'charset=utf-8');
-  const query_name = require('./itaiji.js').getQuery(escapeSQL(req.query.name));
-  pool.query(query_name)
-  .then((res_pg) => {
-    if (res_pg.rowCount == 1) {
-      res.status(200).send(res_pg.rows[0].data);
-    } else if (res_pg.rowCount == 0) {
-      res.status(500).send("error: hit no players.");
-    } else {
-      res.status(500).send("error: hit multiple players.");
-    }
-  }).catch(err => {
-    console.error('Error executing query', err.stack);
-    res.status(400).send();
-  });
+  const query_name = require('./itaiji.js').getQuery(req.query.name);
+  const result = await worker.getPlayer(query_name);
+  console.log(result);
+
+  if (result.length == 1) {
+    res.status(200).send(result[0].data);
+  } else if (result.length == 0) {
+    res.status(500).send("error: hit no players.");
+  } else {
+    res.status(500).send("error: hit multiple players.");
+  }
 });
 
 app.get('/', (req, res) => {
@@ -50,7 +49,13 @@ app.get('/', (req, res) => {
 // listen on port
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`listening on ${port}`);
+  console.log(`[MAIN] listening on ${port}`);
+});
+
+// execute worker.js when executed and AM3:00
+// const worker = new Worker('./worker.js')
+cron.schedule('0 0 3 * * *', () => {
+  const worker_cron = new Worker('./worker.js')
 });
 
 // ----------------------------------------
@@ -61,7 +66,7 @@ async function handleEvent(event) {
     return Promise.resolve(null);
   }
   
-  const messages = await router.createMessage(event.message.text);
+  const messages = await worker.createMessage(event.message.text);
   client.replyMessage(event.replyToken, messages)
   .catch(e => {console.error(e)});
 }
