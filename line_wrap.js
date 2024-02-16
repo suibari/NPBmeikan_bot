@@ -18,7 +18,7 @@ exports.createMessageByNumber = async function (res, dct_tn) {
 };
 
 exports.createMessageByName = async function (res) {
-  if (Array.isArray(res)) {
+  if (res.length > 1) {
     // 複数選手hitした場合
     var res_length = res.length;
     messages = [];
@@ -70,9 +70,9 @@ exports.createMessageByName = async function (res) {
                   text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
     };
 
-  } else if (res) {
+  } else if (res.length == 1) {
     // 単一選手hitした場合
-    const obj = JSON.parse(res.data);
+    const obj = JSON.parse(res[0].data);
     const news = await scraping.getNews(obj.name);
     const messages_main = createMsgObj(obj);
     const messages_news = createMsgNewsObj(news);
