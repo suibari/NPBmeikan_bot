@@ -52,21 +52,21 @@ db.serialize(async() => {
 // -------------------------------
 // api (from router.js)
 exports.createMessage = function (text) {
-  return new Promise (resolve => {
+  return new Promise (async resolve => {
   
     // チーム名、背番号が含まれるか判定
     const dct_tn = detectTeamAndNum(text);
     
     if ((dct_tn.team) && (dct_tn.num)) {
       // メッセージにチーム名および背番号が含まれている
-      const result = getPlayerJson(text);
-      const message = line_wrap.createMessageByNumber(result, dct_tn);
+      const result = await getPlayerJson(text);
+      const message = await line_wrap.createMessageByNumber(result, dct_tn);
       return resolve(message);
 
     } else {
       // メッセージは選手名検索である
-      const result = getPlayerJson(text);
-      const message = line_wrap.createMessageByName(result);
+      const result = await getPlayerJson(text);
+      const message = await line_wrap.createMessageByName(result);
       return resolve(message);
     };
   })
