@@ -59,10 +59,9 @@ app.listen(port, () => {
   console.log(`[MAIN] listening on ${port}`);
 });
 
-// execute worker.js when executed and AM3:00
-// const worker = new Worker('./worker.js')
+// execute update DB at AM3:00
 cron.schedule('0 0 3 * * *', () => {
-  const worker_cron = new Worker('./worker.js')
+  worker.initOrUpdateDB();
 });
 
 // ----------------------------------------

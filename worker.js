@@ -35,19 +35,25 @@ const query = `INSERT INTO player (url, data, updated_at)
                VALUES ($url, $data, current_timestamp)
               `;
 
-console.log("[WORKER] start worker.")
-// 選手一覧ページの全選手に対してgetPlayerDataByUrl関数を実行して、結果をDBに格納する
-db.serialize(async() => {
-  // テーブルが存在すれば削除し、存在しなければ作る
-  db.run("DROP TABLE IF EXISTS player")
-  db.run("CREATE TABLE IF NOT EXISTS player(url, data, updated_at)");
-  console.log("[WORKER] create db.")
+exports.initOrUpdateDB = function() {
+  return new Promise (resolve => {
+    console.log("[WORKER] start worker.")
+    // 選手一覧ページの全選手に対してgetPlayerDataByUrl関数を実行して、結果をDBに格納する
+    db.serialize(async() => {
+      // テーブルが存在すれば削除し、存在しなければ作る
+      db.run("DROP TABLE IF EXISTS player")
+      db.run("CREATE TABLE IF NOT EXISTS player(url, data, updated_at)");
+      console.log("[WORKER] complete to drop/create db.")
 
-  const url_players = await createPlayerUrlArray();
-  await insertDb(url_players);
+      const url_players = await createPlayerUrlArray();
+      await insertDb(url_players);
 
-  return;
-});
+      resolve();
+    });
+  })
+}
+// execute initialize DB when instance this js.
+exports.initOrUpdateDB();
 
 // -------------------------------
 // api (from router.js)
