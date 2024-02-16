@@ -60,12 +60,16 @@ exports.createMessage = function (text) {
     if ((dct_tn.team) && (dct_tn.num)) {
       // メッセージにチーム名および背番号が含まれている
       const result = await getPlayerJson(text);
+      console.log("[WORKER] detect team and number!");
+      console.log(result);
       const message = await line_wrap.createMessageByNumber(result, dct_tn);
       return resolve(message);
 
     } else {
       // メッセージは選手名検索である
       const result = await getPlayerJson(text);
+      console.log("[WORKER] detect player name!");
+      console.log(result);
       const message = await line_wrap.createMessageByName(result);
       return resolve(message);
     };

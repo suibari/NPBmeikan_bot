@@ -18,11 +18,11 @@ exports.createMessageByNumber = async function (res, dct_tn) {
 };
 
 exports.createMessageByName = async function (res) {
-  const res_length = res.length;
-
-  if (res_length > 1) {
+  if (Array.isArray(res)) {
     // 複数選手hitした場合
+    var res_length = res.length;
     messages = [];
+    
     const msg_length  = Math.ceil(res_length / 10); // 選手数を10で割った商(切り上げ)を計算
     const lastmsg_num = res_length - Math.floor(res_length / 10) * 10; // 選手数を10で割った余りを計算
     var i_max;
@@ -70,7 +70,7 @@ exports.createMessageByName = async function (res) {
                   text: "選手検索結果が50件を超えました。もう少し長い選手名で試してみてください。"};
     };
 
-  } else if (res_length == 1) {
+  } else if (res) {
     // 単一選手hitした場合
     const obj = JSON.parse(res[0].data);
     const news = await scraping.getNews(obj.name);
