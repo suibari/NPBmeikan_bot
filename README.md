@@ -1,7 +1,7 @@
 NPB選手名鑑 LINE-bot
 ====
 
-LINEトークの会話に応じて12球団現役プロ野球選手のリアルタイム情報を返信するLINE botです。
+LINEトークの会話に応じて12球団現役プロ野球選手の最新情報を返信するLINE botです。
 
 選手情報は、[NPB(日本プロ野球機構)ウェブサイト](https://npb.jp/)から引用させていただきました。
 
@@ -11,7 +11,7 @@ LINEトークの会話に応じて12球団現役プロ野球選手のリアル�
 
 ## Description
 
-![npbmeikan](https://user-images.githubusercontent.com/61776220/90129304-5c874c80-dda3-11ea-8f72-c9756ffb93bc.png)
+![sequence dialog](http://www.plantuml.com/plantuml/proxy?src=https://gist.githubusercontent.com/suibari/ba0a7d00672005ac71a2b045e8b61b56/raw/d16fb53f90bd9f1fdfccfa5a90bc2050c0fc4a69/npb_meikan_bot_sequence.txt)
 
 本アプリは以下の機能を持ちます。
 
@@ -31,6 +31,7 @@ LINEトークの会話に応じて12球団現役プロ野球選手のリアル�
 * ユーザがbotにチーム名+背番号をトークすると、botはその選手の情報をRDBから取得してユーザに返答する
 * 複数名の選手がRDBで検索hitした場合は、botは該当選手候補を一覧化してユーザに返答する
 * ユーザが複数選手一覧をタップしたら、botはその選手の情報をRDBから取得してユーザに返答する
+* 対象選手に関する最新ニュースも併せて返答する
 * 選手名検索では異体字を考慮する（斎藤が検索されたとき、斉藤と斎藤もOR検索する。山崎が検索されたとき、山﨑もOR検索する　など）
 
 ## VS. 
