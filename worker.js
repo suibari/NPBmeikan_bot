@@ -74,6 +74,9 @@ exports.createMessage = function (text) {
       return resolve(message);
     };
   })
+  .catch(err => {
+    console.error(err);
+  })
 };
 
 exports.getPlayerJson = function (query) {
