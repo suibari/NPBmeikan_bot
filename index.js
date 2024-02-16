@@ -29,17 +29,24 @@ app.post('/callback', line.middleware(config), (req, res) => {
 // 生データを返す
 app.get('/json', async (req, res) => {
   res.header('Content-Type', 'application/json', 'charset=utf-8');
-  const query_name = require('./itaiji.js').getQuery(req.query.name);
-  const result = await worker.getPlayer(query_name);
+  const result = await worker.getPlayerJson(req.query.q);
   console.log(result);
 
-  if (result.length == 1) {
+  if (result && Array.isArray(result)) {
     res.status(200).send(result[0].data);
-  } else if (result.length == 0) {
-    res.status(500).send("error: hit no players.");
+  } else if (result) {
+    res.status(200).send(result.data);
   } else {
-    res.status(500).send("error: hit multiple players.");
+    res.status(500).send("error: hit no players.");
   }
+
+  // if (result.length > 0) {
+  //   res.status(200).send(result[0].data);
+  // } if (result.length == 0) {
+  //   res.status(500).send("error: hit no players.");
+  // } else {
+  //   res.status(500).send("error: hit multiple players.");
+  // }
 });
 
 app.get('/', (req, res) => {

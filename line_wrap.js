@@ -1,8 +1,8 @@
 const scraping = require('./scraping.js');
 
 exports.createMessageByNumber = async function (res, dct_tn) {
-  if (res.length > 0) {
-    const obj = JSON.parse(res[0].data);
+  if (res) {
+    const obj = JSON.parse(res.data);
     const news = await scraping.getNews(obj.name);
     const messages_main = createMsgObj(obj);
     const messages_news = createMsgNewsObj(news);

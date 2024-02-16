@@ -32,7 +32,7 @@ var url_players = [];
 
 // SQLクエリ(UPDATE)
 const query = `INSERT INTO player (url, data, updated_at)
-               VALUES (?, ?, current_timestamp)
+               VALUES ($url, $data, current_timestamp)
               `;
 
 console.log("[WORKER] start worker.")
@@ -54,50 +54,58 @@ db.serialize(async() => {
 exports.createMessage = function (text) {
   return new Promise (resolve => {
   
-    const query_team_no = `SELECT * FROM player WHERE data->'$.team' = ? AND data->'$.number' = ? ;`;
-    
     // チーム名、背番号が含まれるか判定
     const dct_tn = detectTeamAndNum(text);
     
     if ((dct_tn.team) && (dct_tn.num)) {
       // メッセージにチーム名および背番号が含まれている
+      const result = getPlayerJson(text);
+      const message = line_wrap.createMessageByNumber(result, dct_tn);
+      return resolve(message);
+
+    } else {
+      // メッセージは選手名検索である
+      const result = getPlayerJson(text);
+      const message = line_wrap.createMessageByName(result);
+      return resolve(message);
+    };
+  })
+};
+
+exports.getPlayerJson = function (query) {
+  return new Promise (resolve => {
+  
+    const query_team_no = `SELECT * FROM player WHERE data->>'team' = $team AND data->>'no' = $number ;`;
+    
+    // チーム名、背番号が含まれるか判定
+    const dct_tn = detectTeamAndNum(query);
+    
+    if ((dct_tn.team) && (dct_tn.num)) {
+      // メッセージにチーム名および背番号が含まれている
       // SQL-selet (チーム名&背番号検索)
       const params = {
-        team: dct_tn.team,
-        number: dct_tn.num
+        $team: dct_tn.team,
+        $number: dct_tn.num
       };
       db.serialize(() => {
-        const res = db.get(query_team_no, params.team, params.number);
-        const message = line_wrap.createMessageByNumber(res, dct_tn);
-        console.log(message);
-        return resolve(message);
+        console.log(params);
+        db.get(query_team_no, params, (err, row) => {
+          return resolve(row);
+        });
       });
 
     } else {
       // メッセージは選手名検索である
       // SQL-select (選手名検索)
-      const query_name = itaiji.getQuery(escapeSQL(text)); // メタエスケープ＆異体字を考慮してLIKE～ORしたクエリを生成
+      const query_name = itaiji.getQuery(escapeSQL(query)); // メタエスケープ＆異体字を考慮してLIKE～ORしたクエリを生成
       db.serialize(() => {
-        const res = db.all(query_name, (err, rows) => {
-          const message = line_wrap.createMessageByName(rows);
-          console.log(message);
-          resolve(message);
+        db.all(query_name, (err, rows) => {
+          return resolve(rows);
         });
       })
     };
   })
 };
-
-// 選手名を検索し、結果を返す関数
-exports.getPlayer = function (query_name) {
-  return new Promise (resolve => {
-    db.serialize(() => {
-      const res = db.all(query_name, (err, rows) => {
-        resolve(rows);
-      });
-    })
-  })
-}
 
 // テキストにチーム名、背番号が含まれるか判定する関数
 function detectTeamAndNum(text) {
@@ -198,19 +206,22 @@ async function scrapingAndHmsetDB (url_p) {
     console.log("[WORKER] conecting: " + url_p);
     scraper.getPlayerDataByURL(url_p).then(res => {
       // 選手情報オブジェクトをDBに格納
-      var params = {
-        url: res.url,
-        name: res.name,
-        team: res.team,
-        number: res.no,
-        data: JSON.stringify(res)
+      const params = {
+        $url: res.url,
+        // $name: res.name,
+        // $team: res.team,
+        // $number: res.no,
+        $data: JSON.stringify(res)
       };
       db.serialize(() => {
-        db.run(query, params.url, params.data);
+        db.run(query, params);
+        // db.all("SELECT * FROM player;", (err, rows) => {
+        //   console.log(rows);
+        // });
+        console.log("[WORKER] inserted db.");
       });
-      console.log("[WORKER] inserted db.");
         resolve();
-      })
+    })
     .catch(err => {
       console.error('[WORKER] Error: ', err.stack);
       console.log("[WORKER] Error occur: "+ url_p);
