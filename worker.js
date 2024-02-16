@@ -59,7 +59,7 @@ exports.createMessage = function (text) {
     
     if ((dct_tn.team) && (dct_tn.num)) {
       // メッセージにチーム名および背番号が含まれている
-      const result = await getPlayerJson(text);
+      const result = await exports.getPlayerJson(text);
       console.log("[WORKER] detect team and number!");
       console.log(result);
       const message = await line_wrap.createMessageByNumber(result, dct_tn);
@@ -67,7 +67,7 @@ exports.createMessage = function (text) {
 
     } else {
       // メッセージは選手名検索である
-      const result = await getPlayerJson(text);
+      const result = await exports.getPlayerJson(text);
       console.log("[WORKER] detect player name!");
       console.log(result);
       const message = await line_wrap.createMessageByName(result);
