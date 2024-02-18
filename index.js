@@ -62,6 +62,9 @@ app.listen(port, () => {
 // execute update DB at AM3:00
 cron.schedule('0 0 3 * * *', () => {
   worker.initOrUpdateDB();
+}, {
+  scheduled: true,
+  timezone: "Asia/Tokyo"
 });
 
 // ----------------------------------------
