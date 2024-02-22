@@ -188,6 +188,7 @@ function createPlayerUrlArray() {
         console.log($(elem).text());
         console.log(url_players[i]);
       });
+      await sleep(1000);
     };
     // 重複削除
     url_players = Array.from(new Set(url_players));
